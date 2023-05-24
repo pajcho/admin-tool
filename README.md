@@ -2,7 +2,10 @@
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 
-Welcome to the Admin Tool repository :wave: 
+Welcome to the Admin Tool repository :wave:
+
+## Demo link
+:point_right: You can view a Github Pages demo [HERE](https://pajcho.github.io/admin-tool/) :point_left:
 
 ## Important notes:
 - This is a **demo** Angular application. 
