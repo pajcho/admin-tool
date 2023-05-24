@@ -8,8 +8,8 @@ const mockConfig: MockRequest[] = [
     getResponse: () => {
       return {
         data: {
-          key: 'dib',
-          name: 'DIB Travel',
+          key: 'main',
+          name: 'Main tenant',
           config: {},
           primary: true,
           topLevelDomainCW: "example.com",
