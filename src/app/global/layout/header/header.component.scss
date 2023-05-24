@@ -1,0 +1,24 @@
+:host {
+  .mat-toolbar,
+  .user-menu-trigger {
+    height: var(--dib-header-height);
+  }
+
+  .user-menu-trigger {
+    span.material-icons {
+      font-size: 30px;
+
+      @screen sm {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.user-menu-dropdown {
+  min-width: 200px;
+
+  span.material-icons {
+    font-size: 48px;
+  }
+}

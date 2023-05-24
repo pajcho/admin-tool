@@ -1,0 +1,15 @@
+:host {
+  @apply flex h-full w-full flex-col justify-center;
+
+  > div {
+    @apply mx-auto flex w-80 flex-col items-center justify-center rounded-lg border bg-white p-6 shadow;
+
+    // Display auth pages in full screen on smaller screens (mobile)
+    @apply xs:h-full xs:w-full xs:rounded-none xs:border-0;
+
+    img {
+      max-height: 75px;
+      max-width: 260px;
+    }
+  }
+}

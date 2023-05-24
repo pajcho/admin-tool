@@ -1,0 +1,53 @@
+<dib-dialog-title>{{ isUpdate ? 'Edit' : 'Add' }} Vat Category</dib-dialog-title>
+<mat-dialog-content class="mt-4 mb-6">
+  <form [formGroup]="form" class="grid grid-cols-1">
+    <mat-form-field>
+      <mat-label>Vat Category Name</mat-label>
+      <input required matInput formControlName="name" autocomplete="off" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Point of Sale</mat-label>
+      <mat-select required formControlName="country">
+        <mat-option *ngFor="let country of countries$ | async" [value]="country">{{ country.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="p-float-label mb-6">
+      <p-dropdown
+        [filter]="true"
+        [resetFilterOnHide]="true"
+        [autoDisplayFirst]="false"
+        formControlName="product"
+        [options]="productsData$ | async"
+        optionLabel="name"
+        appendTo="body"
+        styleClass="flex"
+        required
+      ></p-dropdown>
+      <label>Product</label>
+    </div>
+    <mat-form-field>
+      <mat-label>External ID</mat-label>
+      <input required matInput formControlName="externalId" autocomplete="off" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Vat (%)</mat-label>
+      <input required matInput formControlName="vatPercentage" autocomplete="off" />
+    </mat-form-field>
+    <!--    <mat-slide-toggle color="warn" class="self-center mb-2" [checked]="data.item.active" [(ngModel)]="data.item.enabled">-->
+    <!--      Active-->
+    <!--    </mat-slide-toggle>-->
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="mb-1 justify-end">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button
+    mat-button
+    color="primary"
+    [ngClass]="form.invalid ? 'mat-flat-button' : 'mat-stroked-button'"
+    (click)="close()"
+    [disabled]="form.invalid"
+  >
+    {{ isUpdate ? 'Save' : 'Add' }}
+  </button>
+</mat-dialog-actions>

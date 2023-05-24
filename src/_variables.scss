@@ -1,0 +1,9 @@
+:root {
+  --dib-breadcrumbs-height: 56px;
+  --dib-header-height: 80px;
+
+  @screen sm {
+    --dib-breadcrumbs-height: 40px;
+    --dib-header-height: 50px;
+  }
+}

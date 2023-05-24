@@ -1,0 +1,21 @@
+<div class="min-h-full p-6">
+  <ng-container *ngIf="!loading; else showLoader">
+    <ng-container *ngIf="!withItem || item; else noData">
+      <div class="flex h-full">
+        <div class="mt-4 mt-10 flex w-60 flex-col empty:hidden sm:w-40">
+          <ng-content select="[slot='tabs']"></ng-content>
+        </div>
+        <div class="flex-1 overflow-y-auto rounded-lg bg-white py-6 px-8 shadow-sm">
+          <ng-content select="[slot='content']"></ng-content>
+        </div>
+        <ng-content></ng-content>
+      </div>
+    </ng-container>
+    <ng-template #noData> No data for selected item... </ng-template>
+  </ng-container>
+  <ng-template #showLoader>
+    <div class="flex h-full w-full items-center justify-center">
+      <dib-dot-loader></dib-dot-loader>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,106 @@
+<dib-dialog-title>
+  <span class="flex items-center">
+    <i class="material-icons mr-2 text-dib-green-600">directions_train</i>
+    Train to {{ train.firstJourney.lastSegment.arrivalLocationName }}
+  </span>
+</dib-dialog-title>
+<mat-dialog-content>
+  <div class="mt-6 mb-6 flex sm:flex-col">
+    <div class="w-full border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+      <div class="grid grid-flow-row auto-rows-min gap-1">
+        <h3 class="flex text-xl font-bold">
+          {{ train.firstJourney.firstSegment.departureLocationName }} to {{ train.firstJourney.lastSegment.arrivalLocationName }}
+        </h3>
+        <span>
+          {{ train.firstJourney.firstSegment.departureDateTime | dibDate: 'time' }} -
+          {{ train.firstJourney.lastSegment.arrivalDateTime | dibDate: 'time' }}
+          ({{ train.firstJourney.totalDuration | dibDuration: 'minutesToHM' }})
+        </span>
+      </div>
+
+      <div *ngFor="let itinerary of train.firstJourney.itineraries">
+        <ng-container *ngFor="let segment of itinerary.segments">
+          <div class="mt-4 mb-2 flex flex-row items-center justify-between border-b pb-1">
+            <!-- TODO: Add train operator icons here -->
+            <span>Operated by: {{ segment.segmentProducer }} &#9702; {{ itinerary.itineraryClassLabel }}</span>
+            <span class="rounded-xl bg-gray-500 px-1.5 text-2xs leading-normal text-white">{{ segment.transportId }}</span>
+          </div>
+          <div class="segment-timeline-wrapper grid grid-flow-col gap-4">
+            <div class="flex flex-col justify-evenly">
+              <span class="text-lg font-bold">{{ segment.departureDateTime | dibDate: 'time' }}</span>
+              <span class="timeline flex">
+                <i class="line"></i>
+              </span>
+              <span class="text-lg font-bold">{{ segment.arrivalDateTime | dibDate: 'time' }}</span>
+            </div>
+
+            <div class="flex flex-col justify-between py-1">
+              <div class="flex flex-row items-center justify-between">
+                <span class="flex-1">{{ segment.departureLocationName }}</span>
+                <span class="ml-3 text-xs">{{ segment.departureDateTime | dibDate: 'productDetails' }}</span>
+              </div>
+              <div class="flex flex-row items-center">
+                <span class="flex-1 text-xs text-gray-500"> Duration: {{ segment.duration | dibDuration: 'minutesToHM' }} </span>
+              </div>
+              <div class="flex flex-row items-center justify-between">
+                <span class="flex-1">{{ segment.arrivalLocationName }}</span>
+                <span class="ml-3 text-xs">{{ segment.arrivalDateTime | dibDate: 'productDetails' }}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="segment.layover" class="my-4 rounded bg-gradient-to-r from-blue-50 via-emerald-50 to-emerald-100 p-3">
+            {{ segment.layover.duration | dibDuration: 'minutesToHM' }} - Quick change in {{ segment.layover.location }}
+          </div>
+        </ng-container>
+
+        <div *ngIf="itinerary.layover" class="my-4 rounded bg-gradient-to-r from-blue-50 via-emerald-50 to-emerald-100 p-3">
+          {{ itinerary.layover.duration | dibDuration: 'minutesToHM' }} - Quick change in {{ itinerary.layover.location }}
+        </div>
+      </div>
+
+      <app-travelers-full-details
+        class="col-span-2 mt-4 mr-2"
+        [travelers]="train.travellers"
+        [contentTpl]="travelerContentTpl"
+      ></app-travelers-full-details>
+      <ng-template #travelerContentTpl let-traveler>
+        <ng-container *ngFor="let journey of train.journeys">
+          <ng-container *ngFor="let itinerary of journey.itineraries">
+            <ng-container *ngFor="let segment of itinerary.segments">
+              <ng-container *ngIf="getSeatingAndExtras(traveler, journey, itinerary, segment) as seatingAndExtras">
+                <span class="mt-2 mb-1 flex border-b pb-1 text-xs">
+                  <i class="material-icons mr-1 text-xs">directions_train</i>
+                  {{ segment.departureLocationName + ' - ' + segment.arrivalLocationName }}
+                </span>
+                <app-cart-item-stat
+                  class="ml-2"
+                  *ngIf="seatingAndExtras.seating"
+                  [label]="'Seating: ' + seatingAndExtras.seating"
+                ></app-cart-item-stat>
+                <app-cart-item-stat
+                  class="ml-2"
+                  *ngIf="seatingAndExtras.extras"
+                  [label]="'Extras: ' + seatingAndExtras.extras"
+                ></app-cart-item-stat>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+    </div>
+    <div class="flex flex-col pl-3 sm:justify-between sm:pt-3 sm:pl-0">
+      <div class="grid min-w-max gap-3 bg-dib-gray-100 p-6 sm:w-full">
+        <div class="flex items-baseline whitespace-nowrap text-gray-500">
+          <span class="mr-1 text-3xl">{{ train.subTotalPrice.amount | number: '1.2-2' }}</span>
+          <small>{{ train.subTotalPrice.currency }}</small>
+        </div>
+        <div>
+          <dib-plural [from]="train.travellers.length" single="passenger" multiple="passengers"></dib-plural>
+        </div>
+      </div>
+      <div class="mt-4 grid min-w-max gap-4">
+        <app-cart-item-stat label="Booking Reference">{{ train.bookingReference || '-' }}</app-cart-item-stat>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

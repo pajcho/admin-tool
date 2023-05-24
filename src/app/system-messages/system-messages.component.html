@@ -1,0 +1,163 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="System Messages" route="/system-messages"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-listing>
+    <ng-container slot="hidden-columns-message">
+      <span class="hidden sm:block">* Some columns are hidden due to small screen size</span>
+    </ng-container>
+
+    <ng-container slot="filters">
+      <mat-form-field>
+        <mat-label>Filter by status</mat-label>
+        <mat-select [value]="filters.status || ''" (selectionChange)="debouncedFilter('status', $event.value)">
+          <mat-option>Show All</mat-option>
+          <mat-option *ngFor="let status of statuses" [value]="status">
+            {{ status | dibDashesToSpaces }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput [value]="filters.filter || ''" (keyup)="debouncedFilter('filter', $event.target.value)" autocomplete="off" />
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container slot="total">
+      <dib-wrapper-listing-total [total]="(systemMessages$ | async).pagination?.totalElements"></dib-wrapper-listing-total>
+    </ng-container>
+
+    <ng-container slot="actions">
+      <button mat-stroked-button (click)="save(null)">New System Message</button>
+    </ng-container>
+
+    <ng-container slot="table">
+      <table
+        mat-table
+        matSort
+        (matSortChange)="onSortChange($event)"
+        [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection"
+        matSortDisableClear
+        [dataSource]="dataSource"
+        class="whitespace-nowrap"
+      >
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Message ID</th>
+          <td mat-cell *matCellDef="let row" class="max-w-2xs truncate text-ellipsis pr-6" [matTooltip]="row.id" matTooltipPosition="above">
+            {{ row.id }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Message</th>
+          <td mat-cell *matCellDef="let row" class="max-w-2xs truncate text-ellipsis pr-6">{{ row.description }}</td>
+        </ng-container>
+        <ng-container matColumnDef="activatedAt">
+          <th class="sm:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Time Received</th>
+          <td class="sm:hidden" mat-cell *matCellDef="let row">
+            <span [matTooltip]="row.activatedAt | dibDate: 'distanceToNow'">
+              {{ row.activatedAt | dibDate: 'uiWithTime' }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="duration">
+          <th class="sm:hidden" mat-header-cell *matHeaderCellDef>Duration Opened</th>
+          <td class="sm:hidden" mat-cell *matCellDef="let row">
+            {{ row.durationOpened }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="flex items-center text-xs">
+              <span class="material-icons mr-1 text-xs text-gray-200" [class.text-dib-green-600]="row.isOpen()">circle</span>
+              {{ row.status | dibDashesToSpaces | titlecase }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="closedBy">
+          <th class="sm:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Closed By</th>
+          <td class="sm:hidden" mat-cell *matCellDef="let row">{{ row.closedBy }}</td>
+        </ng-container>
+        <ng-container matColumnDef="closedAt">
+          <th class="sm:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Time Closed</th>
+          <td class="sm:hidden" mat-cell *matCellDef="let row">
+            <span *ngIf="row.isClosed()" [matTooltip]="row.closedAt | dibDate: 'distanceToNow'">
+              {{ row.closedAt | dibDate: 'uiWithTime' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="loader">
+          <th [colSpan]="columns.length" mat-header-cell *matHeaderCellDef>
+            <div *ngIf="(systemMessages$ | async).loading">
+              <mat-progress-bar mode="indeterminate" class="absolute"></mat-progress-bar>
+            </div>
+          </th>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <a
+              mat-icon-button
+              color="accent"
+              matTooltip="View system message"
+              matTooltipPosition="left"
+              class="hover:text-dib-green-600"
+              (click)="showMessageDetails(row)"
+            >
+              <span class="material-icons">visibility</span>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              matTooltip="Mark as closed"
+              matTooltipPosition="left"
+              class="hover:text-red-600"
+              *ngIf="row.isOpen()"
+              (click)="closeSystemMessage(row)"
+            >
+              <span class="material-icons">hide_source</span>
+            </a>
+            <button
+              mat-icon-button
+              color="accent"
+              matTooltip="Delete system message"
+              matTooltipPosition="left"
+              class="hover:text-red-600"
+              *ngIf="row.isClosed()"
+              (click)="delete(row)"
+            >
+              <span class="material-icons">delete</span>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-header-row *matHeaderRowDef="['loader']"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: columns"></tr>
+        <tr *matNoDataRow class="whitespace-normal">
+          <td [colSpan]="columns.length" class="border-b p-6 text-center">
+            <ng-container *ngIf="(systemMessages$ | async).loading; else noData">
+              Loading data. This can take a few seconds, please be patient.
+            </ng-container>
+            <ng-template #noData> No records found. Please refine your search and try again. </ng-template>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+
+    <ng-container slot="pagination">
+      <mat-paginator
+        *ngIf="(systemMessages$ | async).pagination"
+        [length]="(systemMessages$ | async).pagination.totalElements"
+        [pageIndex]="(systemMessages$ | async).pagination.number"
+        [pageSize]="(systemMessages$ | async).pagination.size"
+        (page)="onPageChange()"
+      ></mat-paginator>
+    </ng-container>
+  </dib-wrapper-listing>
+</dib-wrapper-main>

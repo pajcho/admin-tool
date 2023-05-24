@@ -1,0 +1,108 @@
+<dib-dialog-title>
+  <span class="flex items-center">
+    <i class="material-icons mr-2 text-dib-green-600">directions_car</i>
+    Rental car in {{ car.pickup.address.city }}
+  </span>
+</dib-dialog-title>
+<mat-dialog-content>
+  <div class="mt-6 mb-6 flex sm:flex-col">
+    <div class="w-full flex-1 border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+      <div class="grid grid-flow-row auto-rows-min gap-1">
+        <h3 class="flex flex-wrap items-center text-xl font-bold">
+          <span class="mr-1">{{ car.vehicle.model }}</span>
+          <span class="text-sm font-normal">or similar ({{ car.vehicle.typeCode }})</span>
+        </h3>
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <app-cart-item-stat label="Car class">{{ car.vehicle.category | dibDashesToSpaces | titlecase }}</app-cart-item-stat>
+          <app-cart-item-stat label="Agency"><img src="{{ car.agencyLogo }}" alt="{{ car.carAgency.name }}" /></app-cart-item-stat>
+        </div>
+        <div class="mt-4 grid gap-4">
+          <app-cart-item-stat label="Extras">
+            <span *ngIf="car.vehicle.information.doorNumber" class="mr-3 flex items-center text-xs">
+              <i class="icon-car-door mr-1 text-sm"></i> {{ car.vehicle.information.doorNumber }}
+            </span>
+            <span *ngIf="car.vehicle.information.passengerCapacity" class="mr-3 flex items-center text-xs">
+              <i class="icon-car-seat mr-1 text-sm"></i> {{ car.vehicle.information.passengerCapacity }}
+            </span>
+            <span *ngIf="car.vehicle.information.bootSize" class="mr-3 flex items-center text-xs">
+              <i class="icon-suitcase mr-1 text-sm"></i> {{ car.vehicle.information.bootSize }}
+            </span>
+            <span class="mr-3 flex items-center text-xs">
+              <i
+                class="mr-1 text-sm"
+                [class.icon-manual-transmission]="car.hasManualTransmission"
+                [class.icon-automatic-transmission]="!car.hasManualTransmission"
+              ></i>
+              {{ car.hasManualTransmission ? 'Manual' : 'Automatic' }}
+            </span>
+            <span *ngIf="car.vehicle.airConditioner" class="flex items-center text-xs">
+              <i class="icon-snowflake mr-1 text-sm text-blue-800"></i> Air conditioning
+            </span>
+          </app-cart-item-stat>
+        </div>
+        <div class="mt-4 grid gap-4">
+          <app-cart-item-stat label="Pick-up">
+            <div class="flex flex-col">
+              <span>{{ car.pickup.address.street }}, {{ car.pickup.address.city }}</span>
+              <span>{{ car.pickup.dateAndTime | dibDate: 'productDetailsWithTime' }}</span>
+            </div>
+          </app-cart-item-stat>
+          <app-cart-item-stat label="Drop-off">
+            <div class="flex flex-col">
+              <span>{{ car.dropOff.address.street }}, {{ car.dropOff.address.city }}</span>
+              <span>{{ car.dropOff.dateAndTime | dibDate: 'productDetailsWithTime' }}</span>
+            </div>
+          </app-cart-item-stat>
+        </div>
+      </div>
+
+      <app-travelers-full-details
+        class="col-span-2 mt-4 mr-2"
+        title="Driver Details"
+        [travelers]="[car.driver]"
+      ></app-travelers-full-details>
+    </div>
+    <div class="flex min-w-min max-w-min flex-col pl-3 sm:max-w-full sm:justify-between sm:pt-3 sm:pl-0">
+      <div class="flex flex-col bg-dib-gray-100 p-6 sm:w-full">
+        <!-- Car price -->
+        <div class="mb-1 flex items-baseline justify-between whitespace-nowrap text-gray-500" [class.border-b]="car.extras.length">
+          <span *ngIf="car.optionalExtras.length" class="mr-3 text-xs">Total price</span>
+          <div>
+            <span class="mr-1 text-3xl">{{ car.totalPrice | number: '1.2-2' }}</span>
+            <small>{{ car.currency }}</small>
+          </div>
+        </div>
+
+        <!-- Car extras -->
+        <ul *ngIf="car.extras.length" class="mb-3 list-none text-xs text-gray-500">
+          <ng-container *ngIf="car.optionalExtras.length">
+            <li class="flex justify-between">
+              <span>Car</span>
+              <span class="ml-2">{{ car.basePrice | number: '1.2-2' }} {{ car.currency }}</span>
+            </li>
+            <li *ngFor="let extra of car.optionalExtras" class="flex justify-between">
+              <span>{{ extra.freeText | lowercase | dibUpperFirst }}</span>
+              <span class="ml-2">{{ extra.amount | number: '1.2-2' }} {{ car.currency }}</span>
+            </li>
+          </ng-container>
+
+          <li *ngFor="let extra of car.includedExtras" class="flex justify-between">
+            <span>{{ extra.freeText | lowercase | dibUpperFirst }}</span>
+            <span class="ml-2">Included</span>
+          </li>
+        </ul>
+
+        <!-- Cancellation policy -->
+        <ul class="mt-3 list-disc text-xs">
+          <li class="whitespace-nowrap" *ngIf="car.cancellationPolicy">{{ car.cancellationPolicy }}</li>
+          <li *ngIf="car.cancellationRate">{{ car.cancellationRate }}</li>
+        </ul>
+      </div>
+
+      <!-- Booking reference -->
+      <div class="mt-4 grid min-w-max gap-4">
+        <app-cart-item-stat label="Booking Reference">{{ car.bookingReference || '-' }}</app-cart-item-stat>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

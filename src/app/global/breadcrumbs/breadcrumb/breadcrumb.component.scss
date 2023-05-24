@@ -1,0 +1,23 @@
+:host {
+  > div {
+    > * {
+      line-height: 24px;
+      font-weight: 300;
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+
+  &:not(:last-child) {
+    > div {
+      > *::after {
+        padding-left: 8px;
+        font-size: 20px;
+        font-family: 'Material Icons', sans-serif;
+        content: '\e315';
+
+        @apply xs:text-xs;
+      }
+    }
+  }
+}

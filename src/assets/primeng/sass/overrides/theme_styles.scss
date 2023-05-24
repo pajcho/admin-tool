@@ -1,0 +1,30 @@
+/* Add your customizations of theme here */
+
+.p-dropdown,
+.p-inputtext,
+.p-multiselect,
+.p-autocomplete-multiple-container {
+  &.p-focus,
+  &:enabled:focus {
+    box-shadow: none !important;
+  }
+}
+
+.p-float-label {
+  input:focus,
+  input.p-filled,
+  textarea:focus,
+  textarea.p-filled,
+  .p-inputwrapper-focus,
+  .p-inputwrapper-filled {
+    ~ label {
+      font-size: 11px !important;
+      left: 0.625rem !important;
+    }
+  }
+}
+
+.p-checkbox .p-checkbox-box.p-highlight .p-checkbox-icon.pi-check::before {
+  top: 8px;
+  left: 2px;
+}

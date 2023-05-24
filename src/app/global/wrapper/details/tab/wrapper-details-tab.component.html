@@ -1,0 +1,22 @@
+<div class="flex w-full">
+  <span *ngIf="loading; else showTab">
+    <dib-dot-loader size="small" color="current"></dib-dot-loader>
+  </span>
+  <ng-template #showTab>
+    <span class="flex-1 text-left" *ngIf="!route; else tabWithLink" [attr.title]="title">
+      <ng-container *ngTemplateOutlet="content"></ng-container>
+    </span>
+    <ng-template #tabWithLink>
+      <a class="flex-1 text-left text-current no-underline hover:text-emerald-600" [attr.title]="title" [routerLink]="route">
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+      </a>
+    </ng-template>
+  </ng-template>
+
+  <ng-template #content>
+    <ng-content></ng-content>
+    <span class="badge empty:hidden">
+      <ng-content select="[slot='badge']"></ng-content>
+    </span>
+  </ng-template>
+</div>

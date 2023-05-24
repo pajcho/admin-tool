@@ -1,0 +1,140 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Billing Requests" route="/billing-requests"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-listing>
+    <ng-container slot="filters">
+      <mat-form-field>
+        <mat-label>Corporation Name</mat-label>
+        <input
+          matInput
+          [value]="filters.corporationName || ''"
+          (keyup)="debouncedFilter('corporationName', $event.target.value)"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Status</mat-label>
+        <mat-select
+          [value]="filters.billingProfileRequestStatus || ''"
+          (selectionChange)="debouncedFilter('billingProfileRequestStatus', $event.value)"
+        >
+          <mat-option>Show All</mat-option>
+          <mat-option *ngFor="let status of statuses" [value]="status">
+            {{ status }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container slot="total">
+      <dib-wrapper-listing-total [total]="(billingRequests$ | async).pagination?.totalElements"></dib-wrapper-listing-total>
+    </ng-container>
+
+    <ng-container slot="actions"></ng-container>
+
+    <ng-container slot="table">
+      <table
+        mat-table
+        matSort
+        (matSortChange)="onSortChange($event)"
+        [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection"
+        matSortDisableClear
+        [dataSource]="dataSource"
+        class="whitespace-nowrap"
+      >
+        <ng-container matColumnDef="corporationName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Corporation Name</th>
+          <td mat-cell *matCellDef="let row">{{ row.corporationName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="billingProfileRequestStatus">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Billing Profile Request Status</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="flex items-center text-xs">
+              <span
+                class="material-icons mr-1 text-xs text-gray-200"
+                [class.text-emerald-600]="row.isApproved"
+                [class.text-red-600]="row.isDenied || row.isBlocked"
+              >
+                circle
+              </span>
+              {{ row.billingProfileRequestStatus | titlecase }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="loader">
+          <th colspan="3" mat-header-cell *matHeaderCellDef>
+            <div *ngIf="(billingRequests$ | async).loading">
+              <mat-progress-bar mode="indeterminate" class="absolute"></mat-progress-bar>
+            </div>
+          </th>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <button
+              *ngIf="row.isPending || row.isDenied || row.isBlocked"
+              mat-icon-button
+              color="accent"
+              (click)="approve(row)"
+              matTooltip="Approve billing request"
+              matTooltipPosition="left"
+              class="hover:text-dib-green-600"
+            >
+              <span class="material-icons">check_circle_outline</span>
+            </button>
+            <button
+              *ngIf="row.isPending"
+              mat-icon-button
+              color="accent"
+              (click)="deny(row)"
+              matTooltip="Deny billing request"
+              matTooltipPosition="left"
+              class="hover:text-red-600"
+            >
+              <span class="material-icons">hide_source</span>
+            </button>
+            <button
+              *ngIf="row.isApproved"
+              mat-icon-button
+              color="accent"
+              (click)="block(row)"
+              matTooltip="Block billing request"
+              matTooltipPosition="left"
+              class="hover:text-red-600"
+            >
+              <span class="material-icons">remove_circle_outline</span>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-header-row *matHeaderRowDef="['loader']"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: columns"></tr>
+        <tr *matNoDataRow class="whitespace-normal">
+          <td [colSpan]="columns.length" class="border-b p-6 text-center">
+            <ng-container *ngIf="(billingRequests$ | async).loading; else noData">
+              Loading data. This can take a few seconds, please be patient.
+            </ng-container>
+            <ng-template #noData> No records found. Please refine your search and try again. </ng-template>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+
+    <ng-container slot="pagination">
+      <mat-paginator
+        *ngIf="(billingRequests$ | async).pagination"
+        [length]="(billingRequests$ | async).pagination.totalElements"
+        [pageIndex]="(billingRequests$ | async).pagination.number"
+        [pageSize]="(billingRequests$ | async).pagination.size"
+        (page)="onPageChange()"
+      ></mat-paginator>
+    </ng-container>
+  </dib-wrapper-listing>
+</dib-wrapper-main>

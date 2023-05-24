@@ -1,0 +1,46 @@
+<form @elementCrossFade [formGroup]="form" class="mt-5 flex flex-col items-start space-y-2">
+  <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+    <mat-label>Corporation name</mat-label>
+    <input matInput name="corporationName" formControlName="corporationName" autocomplete="off" />
+  </mat-form-field>
+
+  <span class="ml-2 text-xs font-light uppercase" [class.text-white]="textColor === 'light'">Secondary Search</span>
+  <div class="flex w-full items-end justify-between xs:flex-wrap">
+    <div class="flex flex-wrap xs:w-full">
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Registration Number</mat-label>
+        <input matInput name="registrationNumber" formControlName="registrationNumber" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Company Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option>All statuses</mat-option>
+          <mat-option *ngFor="let status of companyStatuses" [value]="status">{{ status | dibDashesToSpaces }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Subscription Status</mat-label>
+        <mat-select formControlName="subscriptionStatus">
+          <mat-option>All statuses</mat-option>
+          <mat-option *ngFor="let status of subscriptionStatuses" [value]="status">{{ status | dibDashesToSpaces }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="mb-4 flex justify-end space-x-2 xs:w-full">
+      <button
+        type="reset"
+        mat-button
+        class="py-1 px-4"
+        *ngIf="form.dirty"
+        [class.text-white]="textColor === 'light'"
+        (click)="reset($event)"
+      >
+        Reset
+      </button>
+      <button type="submit" mat-flat-button color="primary" class="bg-dib-green-500 py-1 px-4 text-white" (click)="search()">Search</button>
+    </div>
+  </div>
+</form>

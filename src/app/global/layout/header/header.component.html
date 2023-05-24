@@ -1,0 +1,75 @@
+<mat-toolbar *ngIf="loggedInUser$ | async as user" class="flex-nowrap border-b bg-white p-0 shadow-sm">
+  <div class="ml-6">
+    <a class="block" [routerLink]="'/'" title="Go to Dashboard">
+      <i class="material-icons self-start text-dib-green-600 text-4xl">policy</i>
+    </a>
+  </div>
+
+  <div class="mr-6 flex flex-auto items-center justify-end">
+    <button
+      mat-button
+      color="accent"
+      data-id="tenant-menu-button"
+      class="flex items-center rounded border border-gray-500 p-2 text-gray-500 no-underline xs:text-xs"
+      [matMenuTriggerFor]="tmcMenu"
+      *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+    >
+      {{ tmc.name }}
+      <i class="material-icons ml-2 text-xl text-gray-400 xs:ml-0.5 xs:-mt-0.5 xs:text-xs">keyboard_arrow_down</i>
+
+      <mat-menu #tmcMenu="matMenu" xPosition="before">
+        <div data-id="tenant-menu" class="user-menu-dropdown">
+          <button
+            class="flex items-center justify-between"
+            *ngFor="let tenant of (tenants$ | async).data"
+            mat-menu-item
+            (click)="changeTenant(tenant)"
+          >
+            <span>{{ tenant.name }}</span>
+            <span class="flex h-full flex-1 justify-end py-4 pl-4">
+              <img [src]="tenant.logoInverted" [alt]="tenant.name" class="h-auto max-h-full w-auto max-w-full" />
+            </span>
+          </button>
+          <div class="m-4 flex" *ngIf="(tenants$ | async).error as error">
+            <i class="material-icons mr-4 text-red-600">error_outline</i>
+            <span class="flex-1">{{ error }}</span>
+          </div>
+        </div>
+      </mat-menu>
+    </button>
+    <button
+      mat-button
+      color="accent"
+      data-id="user-menu-button"
+      class="flex items-center rounded border border-gray-500 p-2 text-gray-500 no-underline xs:text-xs"
+      [matMenuTriggerFor]="userMenu"
+    >
+      <span class="material-icons mr-2 text-gray-400 xs:mr-0.5 xs:-mt-0.5 xs:text-xs">account_circle</span>
+      {{ user.fullName }}
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div data-id="user-menu" class="user-menu-dropdown m-4 flex flex-col border-b pb-4">
+          <div class="flex items-center text-gray-500">
+            <span class="material-icons mr-2 text-gray-400">account_circle</span>
+            <div class="flex flex-col overflow-hidden">
+              <span [title]="user.fullName" class="overflow-hidden text-ellipsis whitespace-nowrap">{{ user.fullName }}</span>
+              <span [title]="user.username" class="overflow-hidden text-ellipsis">{{ user.username }}</span>
+            </div>
+          </div>
+          <div class="mt-4">
+            <button data-id="user-menu-logout" mat-stroked-button class="text-xs-button" color="accent" (click)="logout()">Log out</button>
+          </div>
+        </div>
+        <button data-id="user-menu-change-password" mat-menu-item (click)="changeUserPassword(user)">
+          <span>Change password</span>
+        </button>
+        <button data-id="user-menu-edit-profile" mat-menu-item (click)="edit(user)">
+          <span>Edit profile</span>
+        </button>
+      </mat-menu>
+    </button>
+    <button data-id="sidebar-menu" class="text-decoration-none -mr-4 inline-flex py-1 px-3 text-emerald-600" (click)="open()">
+      <span class="material-icons">menu</span>
+    </button>
+  </div>
+</mat-toolbar>

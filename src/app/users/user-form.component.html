@@ -1,0 +1,54 @@
+<dib-dialog-title>
+  <div class="flex items-center space-x-2">
+    <span>
+      {{ isUpdate ? 'Edit' : 'Add' }}
+      {{ isCurrentUser ? 'Profile' : 'User' }}
+    </span>
+    <span *ngIf="isUpdate && !isCurrentUser" class="text-sm font-normal text-gray-500">({{ user.fullName }})</span>
+  </div>
+</dib-dialog-title>
+<mat-dialog-content class="mt-4 mb-6">
+  <!-- Enable this when we add option to upload photos
+  <div class="flex items-center mb-4">
+    <span class="mr-2 text-5xl text-gray-400 material-icons">account_circle</span>
+    <span class="font-medium text-emerald-600">Select a photo...</span>
+  </div> -->
+  <form [formGroup]="form" class="grid grid-cols-1">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="username" autocomplete="off" />
+    </mat-form-field>
+    <mat-form-field *ngIf="!isCurrentUser">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type" (selectionChange)="onUserTypeChange($event.value)">
+        <mat-option *ngFor="let type of userTypes" [disabled]="!loggedInUser.hasPermissionToUpdate(type)" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName" autocomplete="off" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" autocomplete="off" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone" autocomplete="off" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="mb-1 justify-end">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button
+    mat-button
+    color="primary"
+    [ngClass]="form.invalid ? 'mat-flat-button' : 'mat-stroked-button'"
+    [mat-dialog-close]="close()"
+    [disabled]="form.invalid"
+  >
+    {{ isUpdate ? 'Save' : 'Add' }}
+  </button>
+</mat-dialog-actions>

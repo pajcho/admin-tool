@@ -1,0 +1,12 @@
+<div class="flex w-full justify-between">
+  <div>
+    <h2 class="text-xl">History of flight booking changes</h2>
+    <span class="text-xs text-gray-500"> Here you can see a ist of changes made to this PNR that are currently missing in our system </span>
+  </div>
+</div>
+
+<div class="mt-8 min-h-[250px]">
+  <ul class="ml-4 list-disc space-y-2">
+    <li class="text-gray-500" *ngFor="let update of updates">{{ update }}</li>
+  </ul>
+</div>

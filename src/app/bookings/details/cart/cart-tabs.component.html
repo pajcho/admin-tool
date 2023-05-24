@@ -1,0 +1,75 @@
+<div class="mt-4 flex flex-col text-sm xs:text-xs">
+  <div class="mb-4 flex whitespace-nowrap border-b">
+    <span
+      *ngFor="let tab of availableTabs"
+      [ngClass]="[activeTab === tab ? 'cursor-pointer border-b-2 border-dib-green-600' : 'opacity-50']"
+      class="-mb-0.5 cursor-pointer p-2 pt-0 uppercase"
+      (click)="activeTab = tab"
+    >
+      {{ tab }}
+    </span>
+  </div>
+
+  <ng-container *ngIf="availableTabs.length" [ngSwitch]="activeTab">
+    <ng-template ngSwitchCase="hotels">
+      <app-cart-tabs-hotel-details
+        @elementCrossFade
+        *ngFor="let item of (cart$ | async).gps; let last = last; let first = first"
+        [data]="item"
+        [class.pt-4]="first"
+        [class.border-transparent]="last"
+        class="border-b py-8"
+      ></app-cart-tabs-hotel-details>
+    </ng-template>
+    <ng-template ngSwitchCase="flights">
+      <app-cart-tabs-flight-details
+        @elementCrossFade
+        *ngFor="let item of (cart$ | async).flightBookings; let last = last; let first = first"
+        [data]="item"
+        [class.pt-4]="first"
+        [class.border-transparent]="last"
+        class="border-b py-8"
+      ></app-cart-tabs-flight-details>
+    </ng-template>
+    <ng-template ngSwitchCase="taxi">
+      <app-cart-tabs-taxi-details
+        @elementCrossFade
+        *ngFor="let item of (cart$ | async).taxiBookings; let last = last; let first = first"
+        [data]="item"
+        [class.pt-4]="first"
+        [class.border-transparent]="last"
+        class="border-b py-8"
+      ></app-cart-tabs-taxi-details>
+    </ng-template>
+    <ng-template ngSwitchCase="rails & bus">
+      <app-cart-tabs-train-details
+        @elementCrossFade
+        *ngFor="let item of (cart$ | async).trainBookings; let last = last; let first = first"
+        [data]="item"
+        [class.pt-4]="first"
+        [class.border-transparent]="last"
+        class="border-b py-8"
+      ></app-cart-tabs-train-details>
+    </ng-template>
+    <ng-template ngSwitchCase="cars">
+      <app-cart-tabs-rental-car-details
+        @elementCrossFade
+        *ngFor="let item of (cart$ | async).rentalCarBookings; let last = last; let first = first"
+        [data]="item"
+        [class.pt-4]="first"
+        [class.border-transparent]="last"
+        class="border-b py-8"
+      ></app-cart-tabs-rental-car-details>
+    </ng-template>
+    <ng-template ngSwitchCase="generic products">
+      <app-cart-tabs-generic-product-details
+        @elementCrossFade
+        *ngFor="let item of (cart$ | async).genericProducts; let last = last; let first = first"
+        [data]="item"
+        [class.pt-4]="first"
+        [class.border-transparent]="last"
+        class="border-b py-8"
+      ></app-cart-tabs-generic-product-details>
+    </ng-template>
+  </ng-container>
+</div>

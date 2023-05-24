@@ -1,0 +1,52 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Companies" route="/companies"></dib-breadcrumb>
+    <dib-breadcrumb label="Company Users" route="/companies/users"></dib-breadcrumb>
+    <dib-breadcrumb
+      [label]="(companyUser$ | async)?.fullName"
+      [route]="'/companies/users/' + (companyUser$ | async)?.id"
+      [loading]="firstTimeLoading$ | async"
+    ></dib-breadcrumb>
+    <dib-breadcrumb label="Agent Assisted Booking" route="/assisted-booking"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-details [loading]="firstTimeLoading$ | async">
+    <!-- Sidebar tabs -->
+    <ng-container slot="tabs" *ngIf="validatedPNR$ | async as pnr">
+      <dib-wrapper-details-tab [attr.active]="(activeStep$ | async) === 'validate'" (click)="goToValidate()">
+        Validate PNR
+      </dib-wrapper-details-tab>
+      <dib-wrapper-details-tab [class.disabled]="!pnr.valid" type="header">Details</dib-wrapper-details-tab>
+      <dib-wrapper-details-tab [class.disabled]="!pnr.valid" [attr.active]="(activeStep$ | async) === 'details'" (click)="goToDetails()">
+        Product Details
+      </dib-wrapper-details-tab>
+      <dib-wrapper-details-tab
+        *ngIf="pnr.valid && pnr.hasUpdates"
+        [attr.active]="(activeStep$ | async) === 'updates'"
+        (click)="goToUpdates()"
+      >
+        Updates
+        <ng-container slot="badge">{{ pnr.updates.length }}</ng-container>
+      </dib-wrapper-details-tab>
+    </ng-container>
+
+    <ng-container slot="content">
+      <ng-container [ngSwitch]="activeStep$ | async">
+        <ng-template ngSwitchCase="validate">
+          <app-validate-pnr [company]="company$ | async" [booker]="companyUser$ | async"></app-validate-pnr>
+        </ng-template>
+        <ng-template ngSwitchCase="details">
+          <app-product-details
+            [company]="company$ | async"
+            [booker]="companyUser$ | async"
+            [pnr]="validatedPNR$ | async"
+          ></app-product-details>
+        </ng-template>
+        <ng-template ngSwitchCase="updates">
+          <app-product-updates [updates]="(validatedPNR$ | async).updates"></app-product-updates>
+        </ng-template>
+      </ng-container>
+    </ng-container>
+  </dib-wrapper-details>
+</dib-wrapper-main>

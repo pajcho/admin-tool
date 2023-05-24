@@ -1,0 +1,152 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Generic Product"></dib-breadcrumb>
+    <dib-breadcrumb label="Products" route="/products"></dib-breadcrumb>
+    <dib-breadcrumb label="Vat Categories" route="/products/vat-categories"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-listing>
+    <ng-container slot="hidden-columns-message">
+      <span class="hidden xs:block">* Some columns are hidden due to small screen size</span>
+    </ng-container>
+
+    <ng-container slot="filters">
+      <mat-form-field>
+        <mat-label>Filter by status</mat-label>
+        <mat-select [value]="filters.active || ''" (selectionChange)="debouncedFilter('active', $event.value)">
+          <mat-option>Show All</mat-option>
+          <mat-option value="true">Active</mat-option>
+          <mat-option value="false">Inactive</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Point of Sale</mat-label>
+        <mat-select (selectionChange)="debouncedFilter('countryId', $event.value)">
+          <mat-option>Show All</mat-option>
+          <mat-option value="197">Sweden</mat-option>
+          <mat-option value="190">Serbia</mat-option>
+          <hr />
+          <mat-option *ngFor="let country of countries$ | async" value="{{ country.id }}">{{ country.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Product</mat-label>
+        <mat-select (selectionChange)="debouncedFilter('productId', $event.value)">
+          <mat-option>Show All</mat-option>
+          <mat-option *ngFor="let product of activeProductsData$ | async" value="{{ product.id }}">{{ product.name }}</mat-option>
+          <mat-optgroup label="Inactive Products">
+            <mat-option *ngFor="let product of inactiveProductsData$ | async" value="{{ product.id }}">{{ product.name }}</mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Vat Category Name</mat-label>
+        <input matInput (keyup)="debouncedFilter('name', $event.target.value)" autocomplete="off" />
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container slot="total">
+      <dib-wrapper-listing-total [total]="(vatCategories$ | async).pagination?.totalElements"></dib-wrapper-listing-total>
+    </ng-container>
+
+    <ng-container slot="actions">
+      <button mat-stroked-button (click)="save(null)">Add Vat Category</button>
+    </ng-container>
+
+    <ng-container slot="table">
+      <table
+        mat-table
+        matSort
+        (matSortChange)="onSortChange($event)"
+        [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection"
+        matSortDisableClear
+        [dataSource]="dataSource"
+        class="whitespace-nowrap"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span class="sm:hidden">Vat Category Name</span>
+            <span class="hidden sm:block">Name</span>
+          </th>
+          <td class="whitespace-normal break-words pr-2" mat-cell *matCellDef="let row">{{ row.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="product.name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span class="sm:hidden">Product Name</span>
+            <span class="hidden sm:block">Group Name</span>
+          </th>
+          <td class="whitespace-normal break-words pr-2" mat-cell *matCellDef="let row">{{ row.productName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="vatPercentage">
+          <th class="text-right xs:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Vat (%)</th>
+          <td class="text-right xs:hidden" mat-cell *matCellDef="let row">
+            <span>{{ row.vatPercentage }}</span>
+            <span class="text-xs text-gray-500">%</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef class="pl-4" mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let row" class="pl-4">
+            <span class="flex items-center text-xs">
+              <span class="material-icons mr-1 text-xs" [ngClass]="[row.active ? 'text-dib-green-600' : 'text-gray-200']">circle</span>
+              {{ row.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="loader">
+          <th colspan="5" mat-header-cell *matHeaderCellDef>
+            <div *ngIf="(vatCategories$ | async).loading">
+              <mat-progress-bar mode="indeterminate" class="absolute"></mat-progress-bar>
+            </div>
+          </th>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <button mat-icon-button color="accent" (click)="save(row)" matTooltip="Edit vat category" matTooltipPosition="left">
+              <span class="material-icons">create</span>
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="toggleStatus(row)"
+              [matTooltip]="row.active ? 'Deactivate vat category in listing' : 'Activate vat category in listing'"
+              matTooltipPosition="left"
+            >
+              <span class="material-icons">
+                {{ row.active ? 'hide_source' : 'check_circle_outline' }}
+              </span>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-header-row *matHeaderRowDef="['loader']"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: columns"></tr>
+        <tr *matNoDataRow class="whitespace-normal">
+          <td [colSpan]="columns.length" class="border-b p-6 text-center">
+            <ng-container *ngIf="(vatCategories$ | async).loading; else noData">
+              Loading data. This can take a few seconds, please be patient.
+            </ng-container>
+            <ng-template #noData> No records found. Please refine your search and try again. </ng-template>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+
+    <ng-container slot="pagination">
+      <mat-paginator
+        *ngIf="(vatCategories$ | async).pagination"
+        [length]="(vatCategories$ | async).pagination.totalElements"
+        [pageIndex]="(vatCategories$ | async).pagination.number"
+        [pageSize]="(vatCategories$ | async).pagination.size"
+        (page)="onPageChange()"
+      ></mat-paginator>
+    </ng-container>
+  </dib-wrapper-listing>
+</dib-wrapper-main>

@@ -1,0 +1,68 @@
+<dib-dialog-title>
+  <span class="flex items-center">
+    <i class="material-icons mr-2 text-dib-green-600">local_taxi</i>
+    Taxi {{ taxi.fromStation ? 'from' : 'to' }} {{ taxi.stationName }}
+  </span>
+</dib-dialog-title>
+<mat-dialog-content>
+  <div class="mt-6 mb-6 flex sm:flex-col">
+    <div class="w-full border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+      <div class="grid grid-flow-row auto-rows-min gap-1">
+        <h3 class="flex flex-wrap items-center text-xl font-bold">
+          <span class="text-sm font-normal">{{ taxi.vehicle.description }}</span>
+        </h3>
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <app-cart-item-stat label="Transfer type">{{ taxiTransferTypeMap[taxi.transferType] }}</app-cart-item-stat>
+          <app-cart-item-stat label="Category">{{ taxiOfferVehicleCategoryMap[taxi.vehicle.category] }}</app-cart-item-stat>
+        </div>
+        <div class="mt-4 grid gap-4">
+          <app-cart-item-stat label="Information">
+            <span *ngIf="taxi.vehicle.seatCount" class="mr-3 flex items-center text-xs">
+              <i class="icon-car-seat mr-1 text-sm"></i> {{ taxi.vehicle.seatCount }}
+            </span>
+            <span *ngIf="taxi.vehicle.baggageCount" class="mr-3 flex items-center text-xs">
+              <i class="icon-suitcase mr-1 text-sm"></i> {{ taxi.vehicle.baggageCount }}
+            </span>
+          </app-cart-item-stat>
+        </div>
+        <div class="mt-4 grid gap-4">
+          <app-cart-item-stat label="Pick-up">
+            <div class="flex flex-col">
+              <span>{{ taxi.pickupLocation }}</span>
+              <span>{{ taxi.start.datetime | dibDate: 'productDetailsWithTime' }}</span>
+            </div>
+          </app-cart-item-stat>
+          <app-cart-item-stat label="Drop-off">
+            <div class="flex flex-col">
+              <span>{{ taxi.dropOffLocation }}</span>
+              <span>{{ taxi.end.datetime | dibDate: 'productDetailsWithTime' }}</span>
+            </div>
+          </app-cart-item-stat>
+        </div>
+      </div>
+
+      <app-travelers-full-details class="col-span-2 mt-4 mr-2" [travelers]="taxi.travelers"></app-travelers-full-details>
+    </div>
+    <div class="flex min-w-min max-w-min flex-col pl-3 sm:max-w-full sm:justify-between sm:pt-3 sm:pl-0">
+      <div class="flex flex-col bg-dib-gray-100 p-6 sm:w-full">
+        <!-- Car price -->
+        <div class="mb-1 flex items-baseline justify-between whitespace-nowrap text-gray-500">
+          <div>
+            <span class="mr-1 text-3xl">{{ taxi.price.amount | number: '1.2-2' }}</span>
+            <small>{{ taxi.price.currency }}</small>
+          </div>
+        </div>
+
+        <!-- Cancellation policy -->
+        <ul class="mt-3 list-disc text-xs" *ngIf="taxi.cancellationPolicies.length">
+          <li *ngFor="let policy of taxi.cancellationPolicies">{{ policy | dibCancellationPolicy: taxi.start.datetime }}</li>
+        </ul>
+      </div>
+
+      <!-- Booking reference -->
+      <div class="mt-4 grid min-w-max gap-4">
+        <app-cart-item-stat label="Booking Reference">{{ taxi.bookingReference || '-' }}</app-cart-item-stat>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

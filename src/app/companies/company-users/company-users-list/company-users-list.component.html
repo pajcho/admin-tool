@@ -1,0 +1,110 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Companies" route="/companies"></dib-breadcrumb>
+    <dib-breadcrumb label="Company Users" route="/companies/users"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-green-search-wrapper
+    activeTab="users"
+    [filters]="filters"
+    (searchUsers)="filterMultiple($event, true)"
+    (searchCompanies)="onSearchCompanies($event)"
+    (searchBookings)="onSearchBookings($event)"
+  ></dib-green-search-wrapper>
+
+  <dib-wrapper-listing>
+    <ng-container slot="title">Company Users</ng-container>
+    <ng-container slot="hidden-columns-message">
+      <span class="hidden sm:block">* Some columns are hidden due to small screen size</span>
+    </ng-container>
+
+    <ng-container slot="total">
+      <dib-wrapper-listing-total [total]="(companyUsers$ | async).pagination?.totalElements"></dib-wrapper-listing-total>
+    </ng-container>
+
+    <ng-container slot="table">
+      <table
+        mat-table
+        matSort
+        (matSortChange)="onSortChange($event)"
+        [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection"
+        matSortDisableClear
+        [dataSource]="dataSource"
+        class="whitespace-nowrap"
+      >
+        <ng-container matColumnDef="firstname">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+          <td mat-cell *matCellDef="let row">{{ row.firstname }}</td>
+        </ng-container>
+        <ng-container matColumnDef="lastname">
+          <th class="xs:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+          <td class="xs:hidden" mat-cell *matCellDef="let row">{{ row.lastname }}</td>
+        </ng-container>
+        <ng-container matColumnDef="companyName">
+          <th class="xs:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
+          <td class="xs:hidden" mat-cell *matCellDef="let row">{{ row.companyName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+          <th class="xs:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+          <td class="xs:hidden" mat-cell *matCellDef="let row">{{ row.role | titlecase }}</td>
+        </ng-container>
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+          <td class="whitespace-normal break-all pr-2" mat-cell *matCellDef="let row">{{ row.username }}</td>
+        </ng-container>
+        <ng-container matColumnDef="phone">
+          <th class="sm:hidden" mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
+          <td class="sm:hidden" mat-cell *matCellDef="let row">{{ row.phone }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="loader">
+          <th [colSpan]="columns.length" mat-header-cell *matHeaderCellDef>
+            <div *ngIf="(companyUsers$ | async).loading">
+              <mat-progress-bar mode="indeterminate" class="absolute"></mat-progress-bar>
+            </div>
+          </th>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/companies/users', row.id]"
+              matTooltip="View company user details"
+              matTooltipPosition="left"
+              class="hover:text-dib-green-600"
+            >
+              <span class="material-icons">visibility</span>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-header-row *matHeaderRowDef="['loader']"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: columns"></tr>
+        <tr *matNoDataRow class="whitespace-normal">
+          <td [colSpan]="columns.length" class="border-b p-6 text-center">
+            <ng-container *ngIf="(companyUsers$ | async).loading; else noData">
+              Loading data. This can take a few seconds, please be patient.
+            </ng-container>
+            <ng-template #noData> No records found. Please refine your search and try again. </ng-template>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+
+    <ng-container slot="pagination">
+      <mat-paginator
+        *ngIf="(companyUsers$ | async).pagination"
+        [length]="(companyUsers$ | async).pagination.totalElements"
+        [pageIndex]="(companyUsers$ | async).pagination.number"
+        [pageSize]="(companyUsers$ | async).pagination.size"
+        (page)="onPageChange()"
+      ></mat-paginator>
+    </ng-container>
+  </dib-wrapper-listing>
+</dib-wrapper-main>

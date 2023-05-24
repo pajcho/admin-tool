@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'src/variables';
+@import 'src/assets/fonts/dib-icons/dibicons';
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import 'src/reset-material';
+@import 'src/custom-material';
+
+@import 'primeicons/primeicons.css';
+@import 'primeng/resources/primeng.css';
+@import 'assets/primeng/theme/theme-dib';
+
+body {
+  @apply overflow-y-scroll text-sm;
+}
+
+.disabled {
+  @apply pointer-events-none opacity-50 grayscale;
+}
+
+// Snackbar utilities
+.snackbar-success {
+  @apply bg-dib-green-600 text-white;
+
+  button {
+    @apply text-white;
+  }
+}
+
+.snackbar-error {
+  @apply bg-dib-red-600 text-white;
+
+  button {
+    @apply text-white;
+  }
+}
+
+// Logo image
+.dib-logo {
+  max-height: 38px;
+  max-width: 200px;
+
+  @screen sm {
+    max-height: 28px;
+  }
+}
+
+// Remove that ugly blue background color from Google Chrome’s autofill
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #ffffff inset;
+}
+
+// Remove default blue outline when button or link is focused
+[ng-reflect-router-link].focus,
+[ng-reflect-router-link]:focus,
+button.focus,
+button:focus {
+  @apply shadow-none outline-none;
+}
+
+.loading {
+  @apply pointer-events-none opacity-40;
+}

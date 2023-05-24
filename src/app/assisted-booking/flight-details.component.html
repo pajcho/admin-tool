@@ -1,0 +1,87 @@
+<a
+  mat-stroked-button
+  color="primary"
+  (click)="toggleDetails()"
+  class="absolute top-[20px] flex h-[20px] w-[20px] min-w-min -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-white p-0"
+>
+  <i class="material-icons text-sm">{{ isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</i>
+</a>
+
+<div class="flex flex-row gap-2 rounded rounded bg-gray-50 p-4 sm:flex-col">
+  <div class="w-full border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+    <div class="grid grid-flow-row auto-rows-min gap-1">
+      <div class="flex flex-row items-center justify-between gap-2">
+        <h3 class="flex cursor-pointer text-xl font-bold" (click)="toggleDetails()">{{ pnr.flightDetailsTitle }}</h3>
+      </div>
+      <span>
+        {{ pnr.firstFlight.firstSegment.departure.time | dibDate: 'productDetailsWithTime' }} -
+        {{ pnr.firstFlight.lastSegment.arrival.time | dibDate: 'productDetailsWithTime' }}
+        <ng-container *ngIf="!pnr.isReturnFlight && pnr.firstFlight.duration">
+          ({{ pnr.firstFlight.duration | dibDuration: 'secondsToHM' }})
+        </ng-container>
+      </span>
+    </div>
+    <div [@openClose]="isOpen ? 'open' : 'close'" *ngFor="let segment of pnr.firstFlight.segments">
+      <div class="mt-4 mb-2 flex flex-row items-center justify-between border-b pb-1" [class.hidden]="!isOpen">
+        <!-- TODO: Add airline icons here -->
+        <span>{{ segment.marketingAirline.name }} &#9702; {{ segment.cabinClass | dibDashesToSpaces | titlecase }}</span>
+        <span class="rounded-xl bg-gray-500 px-1.5 text-2xs leading-normal text-white">
+          {{ segment.marketingCarrier + segment.flightNumber }}
+        </span>
+      </div>
+      <!-- TODO: We can probably extract this into a dib-segment-timeline component and reuse for flights, trains and cars -->
+      <div class="segment-timeline-wrapper grid grid-flow-col gap-4">
+        <div class="flex flex-col justify-evenly">
+          <span class="text-lg font-bold">{{ segment.departure.time | dibDate: 'time' }}</span>
+          <span class="timeline flex">
+            <i class="line"></i>
+          </span>
+          <span class="text-lg font-bold">{{ segment.arrival.time | dibDate: 'time' }}</span>
+        </div>
+
+        <div class="flex flex-col justify-between py-1">
+          <div class="flex flex-row items-center justify-between">
+            <span class="flex-1">{{ segment.departure.airportName }} ({{ segment.departure.airportCode }})</span>
+            <span class="ml-3 text-xs">{{ segment.departure.time | dibDate: 'productDetails' }}</span>
+          </div>
+          <div class="flex flex-row items-center">
+            <span class="flex-1 text-xs text-gray-500"> Duration: {{ segment.duration | dibDuration: 'secondsToHM' }} </span>
+          </div>
+          <div class="flex flex-row items-center justify-between">
+            <span class="flex-1">{{ segment.arrival.airportName }} ({{ segment.arrival.airportCode }})</span>
+            <span class="ml-3 text-xs">{{ segment.arrival.time | dibDate: 'productDetails' }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- TODO: Extract this into dib-segment-layover component and reuse for flights and trains, etc. -->
+      <div
+        *ngIf="segment.layover"
+        class="my-4 flex flex-wrap justify-between rounded bg-gradient-to-r from-blue-50 via-emerald-50 to-emerald-100 p-3"
+      >
+        {{ segment.layover | dibDuration: 'secondsToHM' }} - {{ segment.shortLayover ? 'Short' : 'Long' }} layover in
+        {{ segment.arrival.airportName }}
+
+        <span class="ml-4 flex items-center">
+          <i class="material-icons mr-1 text-xs">language</i>
+          Timezone: {{ segment.arrival.time | date: 'z' }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col pl-3 sm:justify-between sm:pt-3 sm:pl-0">
+    <div class="grid min-w-max transition-all transition duration-100 sm:w-full" [ngClass]="{ 'gap-3 bg-dib-gray-100 p-6': isOpen }">
+      <div class="flex items-baseline whitespace-nowrap text-gray-500">
+        <span class="mr-1 text-3xl">{{ pnr.totalPrice | number: '1.2-2' }}</span>
+        <small>{{ pnr.currency }}</small>
+      </div>
+      <div [@openClose]="isOpen ? 'open' : 'close'">
+        <dib-plural [class.hidden]="!isOpen" [from]="pnr.travellers.length" single="passenger" multiple="passengers"></dib-plural>
+      </div>
+    </div>
+    <div [@openClose]="isOpen ? 'open' : 'close'">
+      <div [class.hidden]="!isOpen" class="mt-4 grid min-w-max gap-4">
+        <app-cart-item-stat label="Booking Reference">{{ pnr.bookingReference?.reference || '-' }}</app-cart-item-stat>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<dib-dialog-title>System message</dib-dialog-title>
+<mat-dialog-content class="mt-4 mb-6">
+  <div class="flex flex-col rounded bg-dib-gray-100 p-6">
+    <span class="mb-4 border-b pb-4 font-mono text-2xs text-gray-500">ID: {{ message.id }}</span>
+    <span class="whitespace-pre-wrap" [innerText]="message.description"></span>
+  </div>
+</mat-dialog-content>

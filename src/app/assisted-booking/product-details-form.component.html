@@ -1,0 +1,225 @@
+<form class="flex flex-col gap-2" [formGroup]="form">
+  <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Passenger Details</small>
+  <ng-container *ngIf="(employees$ | async).length && !(travellerCostCentersLoading$ | async); else showLoader">
+    <ng-container formArrayName="travellers">
+      <ng-container *ngFor="let travellerForm of formTravellers.controls; let index = index">
+        <div class="flex flex-row gap-2 sm:flex-col" [formGroup]="$any(travellerForm)">
+          <mat-form-field class="small white-fill w-[250px]" disabled>
+            <mat-label>{{ employeeId(travellerForm) ? 'Employee Name' : 'Guest Name' }}</mat-label>
+            <input matInput readonly name="name" formControlName="name" autocomplete="off" />
+          </mat-form-field>
+
+          <ng-container *ngIf="hasNamesake(travellerForm.get('name').value); else regularInput">
+            <mat-form-field class="small white-fill w-[250px]">
+              <mat-label>Select Employee Email</mat-label>
+              <mat-select formControlName="email" (selectionChange)="onEmployeeSelect($event.value, index)" required>
+                <mat-option *ngFor="let employee of getEmployeesByName(travellerForm.get('name').value)" [value]="employee.email">
+                  {{ employee.email }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ng-container>
+
+          <ng-template #regularInput>
+            <mat-form-field class="small white-fill w-[250px]">
+              <mat-label>{{ employeeId(travellerForm) ? 'Employee Email' : 'Guest Email' }}</mat-label>
+              <input matInput [readonly]="!!employeeId(travellerForm)" name="email" formControlName="email" autocomplete="off" required />
+            </mat-form-field>
+          </ng-template>
+
+          <mat-form-field
+            class="small white-fill w-[250px]"
+            *ngIf="getTravellerCostCenters$(employeeId(travellerForm) || booker.id) | async as costCenters"
+          >
+            <mat-label>Select Cost Center</mat-label>
+            <mat-select formControlName="costCenter" required>
+              <mat-option *ngFor="let center of costCenters.costCenters" [value]="center">{{ center.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-template #showLoader>
+    <dib-dot-loader size="small" color="current"></dib-dot-loader>
+  </ng-template>
+
+  <!-- Vendor payment provider -->
+  <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Vendor payment</small>
+  <div class="flex flex-row gap-2 sm:flex-col">
+    <ng-container *ngIf="!(isLoadingVendorsPaymentProviders$ | async); else showLoader">
+      <mat-form-field class="small white-fill w-[250px]">
+        <mat-label>Vendor's Payment Provider</mat-label>
+        <mat-select (selectionChange)="onVendorsPaymentProviderChange($event.value)" formControlName="vendorsPaymentProvider" required>
+          <mat-option *ngFor="let provider of vendorsPaymentProviders$ | async" [value]="provider">
+            {{ provider.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="!!form.get('referenceId')" class="small white-fill w-[250px]">
+        <mat-label>Card Reference ID</mat-label>
+        <input matInput name="referenceId" formControlName="referenceId" autocomplete="off" required />
+      </mat-form-field>
+
+      <mat-form-field *ngIf="!!form.get('vendorsLodgeCard')" class="small white-fill w-[250px]">
+        <mat-label>
+          <ng-container *ngIf="isLoadingPaymentOptions$ | async; else showLabel">
+            <dib-dot-loader size="small" color="current"></dib-dot-loader>
+          </ng-container>
+          <ng-template #showLabel>Select Lodge Card</ng-template>
+        </mat-label>
+        <mat-select formControlName="vendorsLodgeCard" required>
+          <mat-option *ngFor="let card of getLodgeCards$ | async" [value]="card">{{ card.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </div>
+
+  <!-- Sales model and markup -->
+  <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Sales Model and Markup</small>
+  <div class="flex flex-col gap-2">
+    <!-- TODO: Conditionally display markup form fields based on the sales model -->
+
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>Select Sales Model</mat-label>
+      <mat-select (selectionChange)="onSalesModelChange($event.value)" formControlName="salesModel" required>
+        <mat-option *ngFor="let salesModel of salesModels" [value]="salesModel">
+          {{ salesModel | dibDashesToSpaces | titlecase }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="form.get('salesModel').value" class="flex flex-row flex-wrap gap-2 sm:flex-col">
+      <mat-form-field class="small white-fill w-[250px]">
+        <mat-label>Purchase Price ({{ pnr.currency }})</mat-label>
+        <input matInput name="purchasePrice" formControlName="purchasePrice" autocomplete="off" required />
+      </mat-form-field>
+
+      <mat-form-field class="small white-fill w-[250px]">
+        <mat-label>Sell Price inc. VAT ({{ pnr.currency }})</mat-label>
+        <input matInput name="sellPrice" formControlName="sellPrice" autocomplete="off" required />
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="!pnr.isNew && form.get('salesModel').value === SalesModel.ADD_MARKUP" class="flex flex-row flex-wrap gap-2 sm:flex-col">
+      <mat-form-field class="small white-fill w-[250px]">
+        <mat-label>Exchange Penalty Price ({{ pnr.currency }})</mat-label>
+        <input matInput name="exchangePenalty" formControlName="exchangePenalty" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field class="small white-fill w-[250px]">
+        <mat-label>Residual Value ({{ pnr.currency }})</mat-label>
+        <input matInput name="residualValue" formControlName="residualValue" autocomplete="off" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Customer payment method -->
+  <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Customer payment method</small>
+  <ng-container *ngIf="!(isLoadingCheckoutOptions$ | async); else showLoader">
+    <div class="flex flex-row gap-2 sm:flex-col">
+      <!-- TODO: Check what payment methods we support and conditionally show the other dropdown if needed -->
+      <mat-form-field class="small white-fill w-[250px]">
+        <mat-label>Select Payment Method</mat-label>
+        <mat-select
+          *ngIf="checkoutPaymentOptions$ | async as paymentOptions"
+          (selectionChange)="onPaymentMethodChange($event.value)"
+          formControlName="paymentMethod"
+          required
+        >
+          <mat-option *ngFor="let paymentType of paymentTypes" [value]="paymentType" [disabled]="!paymentOptions[paymentType]">
+            {{ paymentType | dibDashesToSpaces | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="form.get('paymentMethod').value === PaymentType.BILLING_PROFILE" class="small white-fill w-[250px]">
+        <mat-label>
+          <ng-container *ngIf="isLoadingPaymentOptions$ | async; else showLabel">
+            <dib-dot-loader size="small" color="current"></dib-dot-loader>
+          </ng-container>
+          <ng-template #showLabel>Select Billing Profile</ng-template>
+        </mat-label>
+        <mat-select formControlName="billingProfile" required>
+          <mat-option *ngFor="let profile of getBillingProfiles$ | async" [value]="profile">{{ profile.legalName }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="form.get('paymentMethod').value === PaymentType.LODGE_CARD" class="small white-fill w-[250px]">
+        <mat-label>
+          <ng-container *ngIf="isLoadingPaymentOptions$ | async; else showLabel">
+            <dib-dot-loader size="small" color="current"></dib-dot-loader>
+          </ng-container>
+          <ng-template #showLabel>Select Lodge Card</ng-template>
+        </mat-label>
+        <mat-select formControlName="lodgeCard" required>
+          <mat-option *ngFor="let card of getLodgeCards$ | async" [value]="card">{{ card.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- We only display this section if there is at least one mandatory reference field -->
+  <ng-container *ngIf="hasMandatoryReferenceFields$ | async">
+    <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Reference Fields</small>
+    <ng-container *ngIf="checkoutOptions$ | async as options">
+      <div class="flex flex-row gap-2 sm:flex-col">
+        <mat-form-field class="small white-fill w-[250px]" *ngIf="options.project?.mandatory && options.project?.items?.length">
+          <mat-label>{{ options.project?.label || 'Project' }}</mat-label>
+          <mat-select formControlName="project" required>
+            <mat-option *ngFor="let project of options.project?.items" [value]="project">{{ project.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="small white-fill w-[250px]" *ngIf="options.purposeOfTrip?.mandatory && options.purposeOfTrip?.items?.length">
+          <mat-label>{{ options.purposeOfTrip?.label || 'Purpose of trip' }}</mat-label>
+          <mat-select formControlName="purposeOfTrip" required>
+            <mat-option *ngFor="let purpose of options.purposeOfTrip?.items" [value]="purpose">{{ purpose.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="small white-fill w-[250px]" *ngIf="options.yourReference?.mandatory" disabled>
+          <mat-label>{{ options.yourReference?.label || 'Your reference' }}</mat-label>
+          <input matInput name="yourReference" formControlName="yourReference" autocomplete="off" required />
+        </mat-form-field>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <!-- Agent fee -->
+  <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Agent fee and Notes</small>
+  <div class="flex flex-row gap-2 sm:flex-col">
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>
+        <ng-container *ngIf="isLoadingBookingChannels$ | async; else showBookingChannelsLabel">
+          <dib-dot-loader size="small" color="current"></dib-dot-loader>
+        </ng-container>
+        <ng-template #showBookingChannelsLabel>Agent Fee</ng-template>
+      </mat-label>
+      <mat-select formControlName="agentFee" required>
+        <mat-option *ngFor="let channel of bookingChannels$ | async" [value]="channel">{{ channel.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Agent note -->
+  <div class="flex flex-row gap-2 sm:flex-col">
+    <mat-form-field class="small white-fill w-[500px]">
+      <mat-label>Agent note</mat-label>
+      <textarea matInput formControlName="note" type="text" name="note" cols="60" rows="10"></textarea>
+    </mat-form-field>
+  </div>
+
+  <button
+    [disabled]="(travellerCostCentersLoading$ | async) || (isConfirmingPNR$ | async)"
+    class="mt-4 w-min"
+    type="submit"
+    mat-stroked-button
+    color="primary"
+    (click)="confirm()"
+  >
+    <span *ngIf="!(isConfirmingPNR$ | async); else loader">Confirm</span>
+    <ng-template #loader>
+      <dib-dot-loader size="small" color="current"></dib-dot-loader>
+    </ng-template>
+  </button>
+</form>

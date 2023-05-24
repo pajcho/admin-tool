@@ -1,0 +1,17 @@
+__mocks__
+./config
+.idea
+.vscode
+*.spec.ts
+coverage
+cypress
+dist
+node_modules
+package-lock.json
+package.json
+setup-jest.ts
+src/assets/ie/ie-actions.script.js
+test.ts
+tmp
+yarn-error.log
+yarn.lock

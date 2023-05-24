@@ -1,0 +1,149 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Companies" route="/companies"></dib-breadcrumb>
+    <dib-breadcrumb label="Bookings" route="/companies/bookings"></dib-breadcrumb>
+    <dib-breadcrumb [label]="booking?.tripId" [loading]="firstTimeLoading$ | async"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-details [loading]="firstTimeLoading$ | async" [item]="booking$ | async">
+    <!-- Sidebar tabs -->
+    <ng-container slot="tabs">
+      <!-- TODO: We can probably extract and reuse this tab list across entire booking module (booking, traveler, company) -->
+      <dib-wrapper-details-tab type="header">Company</dib-wrapper-details-tab>
+      <dib-wrapper-details-tab
+        [title]="booking?.company?.name"
+        [route]="'/companies/bookings/' + booking?.cartId + '/company/' + booking?.company?.id"
+      >
+        {{ booking?.company?.name }}
+      </dib-wrapper-details-tab>
+
+      <ng-container *ngIf="booking?.travelerProfiles().length">
+        <dib-wrapper-details-tab type="header">Traveler Profiles</dib-wrapper-details-tab>
+        <dib-wrapper-details-tab
+          *ngFor="let traveler of booking?.travelerProfiles()"
+          [title]="traveler.name"
+          [route]="'/companies/bookings/' + booking.cartId + '/users/' + traveler.id"
+        >
+          {{ traveler.name }}
+        </dib-wrapper-details-tab>
+      </ng-container>
+
+      <dib-wrapper-details-tab type="header">Booking</dib-wrapper-details-tab>
+      <dib-wrapper-details-tab [title]="booking?.tripId" active="true">
+        {{ booking?.tripId }}
+      </dib-wrapper-details-tab>
+    </ng-container>
+
+    <!-- Main content -->
+    <ng-container slot="content">
+      <form *ngIf="form" [formGroup]="form">
+        <!-- Details -->
+        <div class="flex w-full justify-between">
+          <div>
+            <h2 class="text-xl">
+              {{ booking.tripId }}
+            </h2>
+            <span class="text-xs text-gray-500">{{ booking.tripName }}</span>
+          </div>
+        </div>
+
+        <div class="mt-6 mb-10 max-w-max">
+          <button class="border-current text-current" type="submit" mat-stroked-button (click)="travelPortal()">
+            <dib-dot-loader size="small" color="current" *ngIf="overrideTokenLoading$ | async"></dib-dot-loader>
+
+            <ng-container *ngIf="!(overrideTokenLoading$ | async)">
+              <span>Travel Portal</span>
+              <i class="material-icons ml-2 text-lg">launch</i>
+            </ng-container>
+          </button>
+        </div>
+
+        <div class="mt-6 flex sm:flex-col">
+          <div class="w-full border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+            <div class="flex w-2/3 flex-col space-y-6 md:w-full">
+              <div class="flex w-full flex-col space-y-1">
+                <small class="text-xs text-gray-500">Cart Status</small>
+                <span>{{ booking.status | dibDashesToSpaces }}</span>
+              </div>
+
+              <div class="flex w-full space-x-2">
+                <div class="flex flex-1 flex-col space-y-1">
+                  <small class="text-xs text-gray-500">Booker Name</small>
+                  <span>{{ booking.booker.name }}</span>
+                </div>
+                <div class="flex flex-1 flex-col space-y-1">
+                  <small class="text-xs text-gray-500">Traveler Names</small>
+                  <div class="flex flex-col" *ngIf="booking.allTravelers().length; else noTravelers">
+                    <span *ngFor="let traveler of booking.allTravelers()" [class.opacity-50]="!traveler.id">
+                      {{ traveler.name }}
+                      {{ !traveler.id ? '(guest)' : '' }}
+                    </span>
+                  </div>
+                  <ng-template #noTravelers>
+                    <span>-</span>
+                  </ng-template>
+                </div>
+              </div>
+
+              <div class="flex w-full space-x-2">
+                <div class="flex flex-1 flex-col space-y-1">
+                  <small class="text-xs text-gray-500">Product Types</small>
+                  <div class="flex space-x-2 text-gray-600">
+                    <i class="material-icons" *ngFor="let type of booking.productTypes">{{ booking.productIcon(type) }}</i>
+                  </div>
+                </div>
+                <div class="flex flex-1 flex-col space-y-1">
+                  <small class="text-xs text-gray-500">Number Of Items</small>
+                  <span>{{ booking.numberOfItems }}</span>
+                </div>
+              </div>
+
+              <div class="flex w-full space-x-2">
+                <div class="flex flex-1 flex-col space-y-1">
+                  <small class="text-xs text-gray-500">Start Date</small>
+                  <span>{{ booking.startDate | dibDate: 'ui' }}</span>
+                </div>
+                <div class="flex flex-1 flex-col space-y-1">
+                  <small class="text-xs text-gray-500">End Date</small>
+                  <span>{{ booking.endDate | dibDate: 'ui' }}</span>
+                </div>
+              </div>
+
+              <!-- Agent notes -->
+              <div class="w-full">
+                <mat-form-field class="w-full">
+                  <mat-label>Agent note</mat-label>
+                  <textarea
+                    matInput
+                    formControlName="note"
+                    type="text"
+                    name="note"
+                    cols="60"
+                    rows="10"
+                    [class.disabled]="loading$ | async"
+                  ></textarea>
+                </mat-form-field>
+
+                <div class="flex cursor-pointer space-x-2" *ngIf="form.dirty">
+                  <span class="flex flex-1 items-center text-xs text-gray-500">Changes not yet saved.</span>
+                  <button type="reset" class="small-button" mat-button [class.disabled]="loading$ | async" (click)="initForm()">
+                    Cancel
+                  </button>
+                  <button type="submit" class="small-button" mat-stroked-button color="primary" (click)="save()">
+                    <dib-dot-loader size="small" color="current" *ngIf="loading$ | async"></dib-dot-loader>
+                    <span *ngIf="!(loading$ | async)">Save</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <app-cart-price class="flex flex-col pl-3 sm:pt-3 sm:pl-0" *ngIf="booking?.cartId" [cartId]="booking.cartId"></app-cart-price>
+        </div>
+      </form>
+
+      <!-- Cart details -->
+      <app-cart-tabs *ngIf="booking?.cartId" [cartId]="booking.cartId"></app-cart-tabs>
+    </ng-container>
+  </dib-wrapper-details>
+</dib-wrapper-main>

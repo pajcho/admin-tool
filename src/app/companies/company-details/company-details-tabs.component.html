@@ -1,0 +1,24 @@
+<div class="mt-4 flex flex-col text-sm xs:text-xs">
+  <!-- TODO: Create tabs component, similar to breadcrumbs and migrate this part -->
+  <div class="mb-4 flex whitespace-nowrap">
+    <span
+      [ngClass]="[activeTab === 'bookings' ? 'cursor-pointer border-b-2 border-dib-green-600' : 'opacity-50']"
+      class="cursor-pointer p-2 pt-0 uppercase"
+      (click)="activeTab = 'bookings'"
+    >
+      Bookings
+    </span>
+    <span
+      [ngClass]="[activeTab === 'users' ? 'cursor-pointer border-b-2 border-dib-green-600' : 'opacity-50']"
+      class="cursor-pointer p-2 pt-0 uppercase"
+      (click)="activeTab = 'users'"
+    >
+      Users
+    </span>
+  </div>
+
+  <ng-container *ngIf="company?.id as id">
+    <app-company-details-users *ngIf="activeTab === 'users'" [companyId]="id"></app-company-details-users>
+    <app-company-details-bookings *ngIf="activeTab === 'bookings'" [companyId]="id"></app-company-details-bookings>
+  </ng-container>
+</div>

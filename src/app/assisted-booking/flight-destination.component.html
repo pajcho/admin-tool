@@ -1,0 +1,35 @@
+<div class="mt-8 flex flex-col gap-12">
+  <p class="flex flex-row items-center gap-3 bg-gray-100 p-3">
+    <i class="material-icons self-start">help_outline</i>
+    It seems this is a return flight. However, outbound destination can not be determined automatically. Please select one of the available
+    options bellow.
+  </p>
+
+  <div class="flex flex-row gap-6 sm:flex-col" [class.flex-col]="pnr.firstFlight.segments.length > 5">
+    <ng-container *ngFor="let segment of pnr.firstFlight.segments; let first = first; let last = last">
+      <div
+        (click)="!first && !last && select(segment.arrival)"
+        class="relative flex max-w-xs flex-col gap-2 rounded p-4 shadow"
+        [ngClass]="{
+          'cursor-pointer hover:shadow-md': !first && !last,
+          'bg-gray-100 bg-opacity-40 text-gray-400': first || last,
+          'outline outline-1 outline-emerald-600': isSelected(segment.arrival)
+        }"
+      >
+        <span
+          class="absolute top-0 -translate-y-1/2 rounded bg-emerald-600 px-2 text-2xs capitalize text-white"
+          [class.hidden]="!isSelected(segment.arrival)"
+        >
+          Selected
+        </span>
+        <span class="text-center text-2xs text-gray-300">
+          {{ (first ? segment.departure.time : segment.arrival.time) | dibDate: 'productDetailsWithTime' }}
+        </span>
+        <div class="flex flex-col items-center gap-2">
+          <span class="text-center">{{ first ? segment.departure.airportName : segment.arrival.airportName }}</span>
+          <span class="text-center text-xl font-bold">{{ first ? segment.departure.airportCode : segment.arrival.airportCode }}</span>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

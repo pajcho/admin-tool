@@ -1,0 +1,23 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Companies" route="/companies"></dib-breadcrumb>
+    <dib-breadcrumb [label]="(company$ | async)?.corporationName" [loading]="firstTimeLoading$ | async"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-details [loading]="firstTimeLoading$ | async" [item]="company$ | async">
+    <!-- Sidebar tabs -->
+    <ng-container slot="tabs">
+      <dib-wrapper-details-tab type="header">Company</dib-wrapper-details-tab>
+      <dib-wrapper-details-tab [title]="(company$ | async)?.corporationName" active="true">
+        {{ (company$ | async)?.corporationName }}
+      </dib-wrapper-details-tab>
+    </ng-container>
+
+    <!-- Main content -->
+    <ng-container slot="content" *ngIf="company$ | async as company">
+      <app-company-details-form [company]="company"></app-company-details-form>
+      <app-company-details-tabs [company]="company"></app-company-details-tabs>
+    </ng-container>
+  </dib-wrapper-details>
+</dib-wrapper-main>

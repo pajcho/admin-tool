@@ -1,0 +1,46 @@
+<form *ngIf="form" [formGroup]="form">
+  <!-- Details -->
+  <div class="flex w-full justify-between">
+    <div>
+      <h2 class="text-xl">
+        {{ company.corporationName }}
+      </h2>
+      <span class="text-xs text-gray-500">{{ company.registrationNumber }}</span>
+    </div>
+
+    <div class="ml-5 inline cursor-pointer space-x-2" *ngIf="form.dirty">
+      <button type="reset" mat-button [class.disabled]="loading$ | async" (click)="initForm()">Cancel</button>
+      <button type="submit" mat-stroked-button color="primary" (click)="save()">
+        <dib-dot-loader size="small" color="current" *ngIf="loading$ | async"></dib-dot-loader>
+        <span *ngIf="!(loading$ | async)">Save changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-12 grid auto-cols-max grid-flow-col gap-y-3 gap-x-6 sm:grid-flow-row">
+    <div class="grid grid-cols-1 gap-1">
+      <small class="text-xs text-gray-500">Starting Date</small>
+      <div>
+        <span>{{ company.activatedAt | dibDate }}</span>
+        <span *ngIf="company.activatedAt" class="text-xs text-gray-500"> ({{ company.activatedAt | dibDate: 'distanceToNow' }}) </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1">
+      <small class="text-xs text-gray-500">Company Status</small>
+      <mat-radio-group class="flex space-x-6" color="primary" formControlName="status" [class.disabled]="loading$ | async">
+        <mat-radio-button *ngFor="let status of companyStatuses" [value]="status">
+          {{ status | dibDashesToSpaces | titlecase }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+
+  <!-- Agent notes -->
+  <div class="mt-6">
+    <mat-form-field class="w-1/2 sm:w-full">
+      <mat-label>Agent booking note</mat-label>
+      <textarea matInput formControlName="note" type="text" name="note" cols="60" rows="10" [class.disabled]="loading$ | async"></textarea>
+    </mat-form-field>
+  </div>
+</form>

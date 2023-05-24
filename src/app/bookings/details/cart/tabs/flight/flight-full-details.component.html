@@ -1,0 +1,87 @@
+<dib-dialog-title>
+  <span class="flex items-center">
+    <i class="material-icons mr-2 text-dib-green-600">flight</i>
+    Flight to {{ flight.lastSegment.arrival.airportName }}
+  </span>
+</dib-dialog-title>
+<mat-dialog-content>
+  <div class="mt-6 mb-6 flex sm:flex-col">
+    <div class="w-full border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+      <div class="grid grid-flow-row auto-rows-min gap-1">
+        <h3 class="flex text-xl font-bold">
+          {{ flight.firstSegment.departure.airportName }} ({{ flight.firstSegment.departure.airportCode }}) -
+          {{ flight.lastSegment.arrival.airportName }} ({{ flight.lastSegment.arrival.airportCode }})
+        </h3>
+        <span>
+          {{ flight.firstSegment.departure.time | dibDate: 'time' }} -
+          {{ flight.lastSegment.arrival.time | dibDate: 'time' }}
+          <ng-container *ngIf="flight.duration">({{ flight.duration | dibDuration: 'secondsToHM' }})</ng-container>
+        </span>
+      </div>
+
+      <div *ngFor="let segment of flight.segments">
+        <div class="mt-4 mb-2 flex flex-row items-center justify-between border-b pb-1">
+          <!-- TODO: Add airline icons here -->
+          <span>{{ segment.marketingAirline.name }} &#9702; {{ segment.cabinClass | dibDashesToSpaces | titlecase }}</span>
+          <span class="rounded-xl bg-gray-500 px-1.5 text-2xs leading-normal text-white">
+            {{ segment.marketingCarrier + segment.flightNumber }}
+          </span>
+        </div>
+        <!-- TODO: We can probably extract this into a dib-segment-timeline component and reuse for flights, trains and cars -->
+        <div class="segment-timeline-wrapper grid grid-flow-col gap-4">
+          <div class="flex flex-col justify-evenly">
+            <span class="text-lg font-bold">{{ segment.departure.time | dibDate: 'time' }}</span>
+            <span class="timeline flex">
+              <i class="line"></i>
+            </span>
+            <span class="text-lg font-bold">{{ segment.arrival.time | dibDate: 'time' }}</span>
+          </div>
+
+          <div class="flex flex-col justify-between py-1">
+            <div class="flex flex-row items-center justify-between">
+              <span class="flex-1">{{ segment.departure.airportName }} ({{ segment.departure.airportCode }})</span>
+              <span class="ml-3 text-xs">{{ segment.departure.time | dibDate: 'productDetails' }}</span>
+            </div>
+            <div class="flex flex-row items-center">
+              <span class="flex-1 text-xs text-gray-500"> Duration: {{ segment.duration | dibDuration: 'secondsToHM' }} </span>
+            </div>
+            <div class="flex flex-row items-center justify-between">
+              <span class="flex-1">{{ segment.arrival.airportName }} ({{ segment.arrival.airportCode }})</span>
+              <span class="ml-3 text-xs">{{ segment.arrival.time | dibDate: 'productDetails' }}</span>
+            </div>
+          </div>
+        </div>
+        <!-- TODO: Extract this into dib-segment-layover component and reuse for flights and trains, etc. -->
+        <div
+          *ngIf="segment.layover"
+          class="my-4 flex flex-wrap justify-between rounded bg-gradient-to-r from-blue-50 via-emerald-50 to-emerald-100 p-3"
+        >
+          {{ segment.layover | dibDuration: 'secondsToHM' }} - {{ segment.shortLayover ? 'Short' : 'Long' }} layover in
+          {{ segment.arrival.airportName }}
+
+          <span class="ml-4 flex items-center">
+            <i class="material-icons mr-1 text-xs">language</i>
+            Timezone: {{ segment.arrival.time | date: 'z' }}
+          </span>
+        </div>
+      </div>
+
+      <app-travelers-full-details class="col-span-2 mt-4 mr-2" [travelers]="flightBooking.travelers"></app-travelers-full-details>
+    </div>
+    <div class="flex flex-col pl-3 sm:justify-between sm:pt-3 sm:pl-0">
+      <div class="grid min-w-max gap-3 bg-dib-gray-100 p-6 sm:w-full">
+        <span *ngIf="flightBooking.packageId" class="-mb-3 text-xs text-gray-500">Package price</span>
+        <div class="flex items-baseline whitespace-nowrap text-gray-500">
+          <span class="mr-1 text-3xl">{{ flightBooking.totalPrice | number: '1.2-2' }}</span>
+          <small>{{ flightBooking.currency }}</small>
+        </div>
+        <div>
+          <dib-plural [from]="flightBooking.travelers.length" single="passenger" multiple="passengers"></dib-plural>
+        </div>
+      </div>
+      <div class="mt-4 grid min-w-max gap-4">
+        <app-cart-item-stat label="Booking Reference">{{ flightBooking?.bookingReference?.reference || '-' }}</app-cart-item-stat>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

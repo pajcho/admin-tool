@@ -1,0 +1,8 @@
+export enum TravelActionState {
+  PENDING = 'PENDING',
+  DONE = 'DONE',
+  EMPTY = 'EMPTY',
+  SEND_GO_REQUEST = 'SEND_GO_REQUEST',
+  PAYABLE = 'PAYABLE',
+  UNDEFINED = 'UNDEFINED',
+}

@@ -1,0 +1,26 @@
+<dib-dialog-title>{{ isUpdate ? 'Update' : 'Add' }} Product</dib-dialog-title>
+<mat-dialog-content class="mt-4 mb-6">
+  <form [formGroup]="form" class="grid grid-cols-1">
+    <mat-form-field>
+      <mat-label>Product Name</mat-label>
+      <input matInput formControlName="name" autocomplete="off" />
+    </mat-form-field>
+    <mat-checkbox color="primary" class="mb-2 self-center" formControlName="base"> Is Online Product? </mat-checkbox>
+  </form>
+  <span *ngIf="!isUpdate" class="mt-5 flex items-center rounded border-gray-200 bg-dib-gray-100 p-4">
+    <i class="material-icons mr-2 text-lg">info_outline</i>
+    New product will not be visible on PortalApp unless it is linked with active vat category.
+  </span>
+</mat-dialog-content>
+<mat-dialog-actions class="mb-1 justify-end">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button
+    mat-button
+    color="primary"
+    [ngClass]="form.invalid ? 'mat-flat-button' : 'mat-stroked-button'"
+    [mat-dialog-close]="close()"
+    [disabled]="form.invalid"
+  >
+    {{ isUpdate ? 'Save' : 'Add' }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,33 @@
+<div class="mb-4 flex space-x-4 sm:flex-col sm:space-x-0 sm:space-y-4">
+  <div class="flex max-w-xs flex-1 flex-col space-y-2 sm:max-w-full">
+    <span class="text-xs text-gray-500">Car Details</span>
+    <div class="flex space-x-2">
+      <i class="material-icons text-xl text-dib-green-600">directions_car</i>
+      <div class="flex flex-1 flex-col sm:flex-row">
+        <div class="flex flex-1 flex-col">
+          <span class="mb-2 text-xl font-bold">Rental car in {{ data.pickup.address.city }}</span>
+          <span>{{ data.vehicle.model }} or similar ({{ data.vehicle.typeCode }})</span>
+          <span>{{ data.pickup.dateAndTime | dibDate: 'productDetailsWithTime' }}</span>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="mt-4 flex flex-col sm:mt-0">
+            <span class="text-xs text-gray-500">Booking reference</span>
+            <span>{{ data.bookingReference || '-' }}</span>
+          </div>
+
+          <a (click)="showDetails()" class="mt-6 cursor-pointer font-bold text-dib-green-600 sm:mt-2">View details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-1 flex-col space-y-2">
+    <span class="text-xs text-gray-500">Driver Details</span>
+    <div class="flex flex-1 flex-wrap items-baseline">
+      <div class="mb-3 flex flex-col rounded border p-5">
+        <span class="mb-2 whitespace-nowrap text-xl font-bold">{{ data.driver.firstName }} {{ data.driver.lastName }}</span>
+        <span class="whitespace-nowrap">{{ data.driver.email }}</span>
+      </div>
+    </div>
+  </div>
+</div>

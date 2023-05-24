@@ -1,0 +1,74 @@
+<div class="mb-4 bg-emerald-600 text-sm xs:text-xs">
+  <div class="relative flex">
+    <div
+      (click)="!isOpen && toggleSearch()"
+      class="flex flex-1 flex-col py-3 px-6"
+      [ngClass]="{ 'cursor-pointer transition-colors duration-500 hover:bg-emerald-700': !isOpen }"
+    >
+      <div [@showHide]="isOpen ? 'hide' : 'show'" class="flex-1 text-white">
+        <div class="flex items-baseline space-x-2 divide-x divide-white divide-opacity-25 pr-6">
+          <span class="text-xs font-light uppercase">Quick Search</span>
+          <div class="flex items-baseline space-x-2 pl-2" *ngFor="let filter of selectedFilters">
+            <span class="text-xs font-light uppercase opacity-75">{{ filter.name | dibCamelCaseToSpaces }}</span>
+            <span>{{ filter.value }}</span>
+          </div>
+        </div>
+      </div>
+      <div [@openClose]="isOpen ? 'open' : 'close'" class="flex flex-col overflow-hidden">
+        <div class="flex whitespace-nowrap text-white">
+          <span
+            [ngClass]="[activeTab === 'companies' ? 'border-b border-white' : 'opacity-50']"
+            class="block cursor-pointer p-2 pt-0 uppercase"
+            (click)="activeTab = 'companies'"
+          >
+            Companies
+          </span>
+          <span
+            [ngClass]="[activeTab === 'users' ? 'cursor-pointer border-b border-white' : 'opacity-50']"
+            class="block cursor-pointer p-2 pt-0 uppercase"
+            (click)="activeTab = 'users'"
+          >
+            Company Users
+          </span>
+          <span
+            [ngClass]="[activeTab === 'bookings' ? 'cursor-pointer border-b border-white' : 'opacity-50']"
+            class="block cursor-pointer p-2 pt-0 uppercase"
+            (click)="activeTab = 'bookings'"
+          >
+            Bookings
+          </span>
+        </div>
+
+        <dib-search-companies
+          textColor="light"
+          *ngIf="activeTab === 'companies'"
+          (onSearch)="filterCompanies($event)"
+          (onReset)="toggleSearch()"
+        ></dib-search-companies>
+
+        <dib-search-users
+          textColor="light"
+          *ngIf="activeTab === 'users'"
+          (onSearch)="filterUsers($event)"
+          (onReset)="toggleSearch()"
+        ></dib-search-users>
+
+        <dib-search-bookings
+          textColor="light"
+          *ngIf="activeTab === 'bookings'"
+          (onSearch)="filterBookings($event)"
+          (onReset)="toggleSearch()"
+        ></dib-search-bookings>
+      </div>
+    </div>
+
+    <span
+      class="material-icons absolute top-2 right-4 cursor-pointer text-white"
+      (click)="toggleSearch()"
+      [matTooltip]="isOpen ? 'Hide filters' : 'Show filters'"
+      matTooltipPosition="left"
+    >
+      {{ isOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+    </span>
+  </div>
+</div>

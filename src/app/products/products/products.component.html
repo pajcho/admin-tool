@@ -1,0 +1,119 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Generic Product"></dib-breadcrumb>
+    <dib-breadcrumb label="Products" route="/products"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-listing>
+    <ng-container slot="filters">
+      <mat-form-field>
+        <mat-label>Filter by status</mat-label>
+        <mat-select [value]="filters.active || ''" (selectionChange)="debouncedFilter('active', $event.value)">
+          <mat-option>Show All</mat-option>
+          <mat-option value="true">Active</mat-option>
+          <mat-option value="false">Inactive</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="debouncedFilter('name', $event.target.value)" autocomplete="off" />
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container slot="total">
+      <dib-wrapper-listing-total [total]="(products$ | async).pagination?.totalElements"></dib-wrapper-listing-total>
+    </ng-container>
+
+    <ng-container slot="actions">
+      <button mat-stroked-button (click)="save(null)">Add Product</button>
+    </ng-container>
+
+    <ng-container slot="table">
+      <table
+        mat-table
+        matSort
+        (matSortChange)="onSortChange($event)"
+        [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection"
+        matSortDisableClear
+        [dataSource]="dataSource"
+        class="whitespace-nowrap"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="base">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="pl-4">Online Product</th>
+          <td mat-cell *matCellDef="let row" class="pl-4">
+            <span class="flex items-center text-xs">
+              <span class="material-icons mr-1 text-xs" [ngClass]="[row.base ? 'text-dib-green-600' : 'text-gray-200']">circle</span>
+              {{ row.base ? 'Yes' : 'No' }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="pl-4">Status</th>
+          <td mat-cell *matCellDef="let row" class="pl-4">
+            <span class="flex items-center text-xs">
+              <span class="material-icons mr-1 text-xs" [ngClass]="[row.active ? 'text-dib-green-600' : 'text-gray-200']">circle</span>
+              {{ row.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="loader">
+          <th [colSpan]="columns.length" mat-header-cell *matHeaderCellDef>
+            <div *ngIf="(products$ | async).loading">
+              <mat-progress-bar mode="indeterminate" class="absolute"></mat-progress-bar>
+            </div>
+          </th>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <button mat-icon-button color="accent" (click)="save(row)" matTooltip="Edit product" matTooltipPosition="left">
+              <span class="material-icons">create</span>
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="toggleStatus(row)"
+              [matTooltip]="row.active ? 'Deactivate product in listing' : 'Activate product in listing'"
+              matTooltipPosition="left"
+            >
+              <span class="material-icons">
+                {{ row.active ? 'hide_source' : 'check_circle_outline' }}
+              </span>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-header-row *matHeaderRowDef="['loader']"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: columns"></tr>
+        <tr *matNoDataRow class="whitespace-normal">
+          <td [colSpan]="columns.length" class="border-b p-6 text-center">
+            <ng-container *ngIf="(products$ | async).loading; else noData">
+              Loading data. This can take a few seconds, please be patient.
+            </ng-container>
+            <ng-template #noData> No records found. Please refine your search and try again. </ng-template>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+
+    <ng-container slot="pagination">
+      <mat-paginator
+        *ngIf="(products$ | async).pagination"
+        [length]="(products$ | async).pagination.totalElements"
+        [pageIndex]="(products$ | async).pagination.number"
+        [pageSize]="(products$ | async).pagination.size"
+        (page)="onPageChange()"
+      ></mat-paginator>
+    </ng-container>
+  </dib-wrapper-listing>
+</dib-wrapper-main>

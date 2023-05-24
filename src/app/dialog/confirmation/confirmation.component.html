@@ -1,0 +1,8 @@
+<dib-dialog-title [closable]="false">Please confirm</dib-dialog-title>
+<mat-dialog-content class="mt-4 mb-6" [innerHTML]="data.template"></mat-dialog-content>
+<mat-dialog-actions class="mb-1 justify-end">
+  <button mat-button [mat-dialog-close]="false">{{ data.cancel?.label || 'Cancel' }}</button>
+  <button mat-stroked-button color="{{ data.confirm.color || 'primary' }}" [mat-dialog-close]="true">
+    {{ data.confirm.label || 'Delete' | dibUpperFirst }}
+  </button>
+</mat-dialog-actions>

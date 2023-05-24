@@ -1,0 +1,52 @@
+<div class="flex space-x-4 sm:flex-col sm:space-x-0 sm:space-y-4">
+  <div class="flex max-w-xs flex-1 flex-col space-y-2 sm:max-w-full">
+    <span class="text-xs text-gray-500">Train Details</span>
+    <div class="flex space-x-2">
+      <i class="material-icons text-xl text-dib-green-600">directions_train</i>
+      <div class="flex flex-1 flex-col sm:flex-row">
+        <div *ngIf="data.firstJourney as journey" class="flex flex-1 flex-col">
+          <span class="mb-2 text-xl font-bold">
+            {{ journey.firstSegment.departureLocationName }} to {{ journey.lastSegment.arrivalLocationName }}
+          </span>
+
+          <span> Operated by: {{ journey.operatedByLabel }} &#9702; {{ journey.itineraryClassLabel }} </span>
+          <span>{{ journey.firstSegment.departureDateTime | dibDate: 'productDetails' }}</span>
+          <span>
+            {{ journey.firstSegment.departureDateTime | dibDate: 'time' }} -
+            {{ journey.lastSegment.arrivalDateTime | dibDate: 'time' }}
+            ({{ journey.totalDuration | dibDuration: 'minutesToHrMin' }})
+          </span>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="mt-4 flex flex-col sm:mt-0">
+            <span class="text-xs text-gray-500">Booking reference</span>
+            <span>{{ data.bookingReference || '-' }}</span>
+          </div>
+
+          <a (click)="showDetails()" class="mt-6 cursor-pointer font-bold text-dib-green-600 sm:mt-2">View details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-1 flex-col space-y-2">
+    <span class="text-xs text-gray-500">Passenger Details</span>
+    <div class="flex flex-1 flex-wrap items-baseline">
+      <div
+        *ngFor="let traveler of data.travellers; last as last; index as index"
+        class="mb-3 flex flex-col rounded border p-5"
+        [class.mr-3]="!last"
+      >
+        <span class="mb-2 whitespace-nowrap text-xl font-bold">{{ traveler.fullName }}</span>
+
+        <!-- Showing only first segment seating selections -->
+        <span class="whitespace-nowrap">{{ traveler.seatingSelectionDescription }}</span>
+
+        <div class="mt-4 flex flex-col">
+          <span class="text-xs text-gray-500">Extras</span>
+          <div class="flex flex-wrap">{{ traveler.allOptionSelections }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

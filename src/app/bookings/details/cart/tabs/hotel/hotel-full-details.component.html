@@ -1,0 +1,55 @@
+<dib-dialog-title>
+  <span class="flex items-center">
+    <i class="material-icons mr-2 text-dib-green-600">hotel</i>
+    Hotel in {{ hotel.locationPreferences.cityName }}
+  </span>
+</dib-dialog-title>
+<mat-dialog-content>
+  <div class="mt-6 mb-6 flex sm:flex-col">
+    <div class="w-full border-r pr-3 sm:border-b sm:border-r-0 sm:pr-0 sm:pb-3">
+      <div class="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-1">
+        <div class="grid grid-flow-row auto-rows-min gap-1">
+          <h3 class="flex text-xl font-bold">{{ hotel.hotelDescription.hotelName }}</h3>
+          <span>{{ hotel.locationPreferences.hotelAddress }}, {{ hotel.locationPreferences.cityName }}</span>
+        </div>
+        <div class="grid grid-flow-row auto-rows-min gap-4 sm:grid-cols-2">
+          <app-cart-item-stat label="Check-in">{{ hotel.requestedCheckIn | dibDate: 'productDetails' }}</app-cart-item-stat>
+          <app-cart-item-stat label="Check-out">{{ hotel.requestedCheckOut | dibDate: 'productDetails' }}</app-cart-item-stat>
+        </div>
+      </div>
+
+      <app-cart-item-stat label="Special request">{{ hotel.specialRequests || 'None' }}</app-cart-item-stat>
+
+      <ng-container *ngFor="let room of hotel.requestedRooms; index as index">
+        <div class="mt-4 grid grid-cols-2 gap-y-1 gap-x-4 border-t pt-4">
+          <small class="col-span-2 text-xs text-gray-500">Room #{{ index + 1 }}</small>
+          <div class="grid grid-flow-row auto-rows-min gap-2">
+            <h3 class="text-xl font-bold">{{ room.name }}</h3>
+            <dib-plural [from]="room.occupants.length" single="person" multiple="persons"></dib-plural>
+          </div>
+          <app-cart-item-stat *ngIf="hotel.breakfast">Breakfast included</app-cart-item-stat>
+
+          <app-travelers-full-details class="col-span-2 mt-4 mr-2" [travelers]="room.occupants"></app-travelers-full-details>
+        </div>
+      </ng-container>
+    </div>
+    <div class="flex flex-col pl-3 sm:justify-between sm:pt-3 sm:pl-0">
+      <div class="grid min-w-max gap-3 bg-dib-gray-100 p-6 sm:w-full">
+        <span *ngIf="hotel.packageId" class="-mb-3 text-xs text-gray-500">Package price</span>
+        <div class="flex items-baseline whitespace-nowrap text-gray-500">
+          <span class="mr-1 text-3xl">{{ hotel.requestedPrice | number: '1.2-2' }}</span>
+          <small>{{ hotel.requestedCurrency }}</small>
+        </div>
+        <div>
+          <dib-plural [from]="hotel.totalNights" single="night, " multiple="nights, "></dib-plural>
+          <dib-plural [from]="hotel.requestedRooms.length" single="room, " multiple="rooms, "></dib-plural>
+          <dib-plural [from]="hotel.totalGuests" single="guest" multiple="guests"></dib-plural>
+        </div>
+      </div>
+      <div class="mt-4 grid min-w-max gap-4 sm:grid-cols-2">
+        <app-cart-item-stat title="Reservation Id" label="Booking Reference">{{ hotel.reservationId || '-' }}</app-cart-item-stat>
+        <app-cart-item-stat *ngIf="hotel.reservationPin" label="Reservation Pincode">{{ hotel.reservationPin }}</app-cart-item-stat>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

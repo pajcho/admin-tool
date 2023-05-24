@@ -1,0 +1,249 @@
+@import 'variables';
+
+/*
+  Added using icomoon.io app. Steps to add new icons:
+  1. Open up icomoon.io app
+  2. Create an empty project
+  3. Hit "import icons" - top left corner and upload dibicons.svg
+  4. Hit "options" (tree vertical lines) on the top right of the icon set/project
+  5. Hit "upload to set" and upload a svg
+  6. Select all and Click "Generate font" on bottom right - the download button will appear
+  7. While on the screen, grab the code for newly uploaded icon and add it to the end of this file
+  8. Change existing files with new downloaded (dibicons.svg, dibicons.ttf, dibicons.woff, dibicons.eot)
+  9. Add the new icon to sandbox and check for regression.
+*/
+
+@font-face {
+  font-family: dibicons;
+  src: url('./dibicons.eot');
+  src: url('./dibicons.eot?#iefix') format('embedded-opentype'), url('./dibicons.woff') format('woff'),
+    url('./dibicons.ttf') format('truetype'), url('./dibicons.svg#dibicons') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+[class^='icon-'],
+[class*=' icon-'] {
+  display: inline-block;
+
+  // stylelint-disable font-family-no-missing-generic-family-keyword
+  // use !important to prevent issues with browser extensions that change fonts
+  font-family: dibicons !important;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  speak: never;
+  text-transform: none;
+
+  // Better Font Rendering
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-air-condition::before {
+  content: $icon-air-condition;
+}
+
+.icon-bidding::before {
+  content: $icon-bidding;
+}
+
+.icon-breakfast::before {
+  content: $icon-breakfast;
+}
+
+.icon-business-travel::before {
+  content: $icon-business-travel;
+}
+
+.icon-calendar-today::before {
+  content: $icon-calendar-today;
+}
+
+.icon-calendar::before {
+  content: $icon-calendar-month;
+}
+
+.icon-coming-soon::before {
+  content: $icon-coming-soon;
+}
+
+.icon-customer-mail::before {
+  content: $icon-email;
+}
+
+.icon-customer-phone::before {
+  content: $icon-headphones;
+}
+
+.icon-cleaning::before {
+  content: $icon-cleaning;
+}
+
+.icon-destination::before {
+  content: $icon-destination;
+}
+
+.icon-single-room::before {
+  content: $icon-single-bed;
+}
+
+.icon-double-room::before {
+  content: $icon-double-bed;
+}
+
+.icon-events::before {
+  content: $icon-event;
+}
+
+.icon-airplane::before {
+  content: $icon-airplane;
+}
+
+.icon-flights::before {
+  content: $icon-flight;
+}
+
+.icon-wifi::before {
+  content: $icon-wifi;
+}
+
+.icon-agent-reservation::before {
+  content: $icon-user;
+}
+
+.icon-group::before {
+  content: $icon-group;
+}
+
+.icon-gym::before {
+  content: $icon-gym;
+}
+
+.icon-half-pansion::before {
+  content: $icon-half-pansion;
+}
+
+.icon-hotel::before {
+  content: $icon-hotel;
+}
+
+.icon-late-check-out::before {
+  content: $icon-reception;
+}
+
+.icon-non-smoking::before {
+  content: $icon-no-smoking;
+}
+
+.icon-parking::before {
+  content: $icon-parking;
+}
+
+.icon-preferences::before {
+  content: $icon-preferences;
+}
+
+.icon-quite-rooms::before {
+  content: $icon-zzz;
+}
+
+.icon-room-service::before {
+  content: $icon-room-service;
+}
+
+.icon-secret-deal::before {
+  content: $icon-secret-deal;
+}
+
+.icon-budget::before {
+  content: $icon-budget;
+}
+
+.icon-special-offer::before {
+  content: $icon-special-offer;
+}
+
+.icon-pool::before {
+  content: $icon-pool;
+}
+
+.icon-tickets::before {
+  content: $icon-ticket;
+}
+
+.icon-tv::before {
+  content: $icon-tv;
+}
+
+.icon-leisure::before {
+  content: $icon-leisure;
+}
+
+.icon-train-departure::before {
+  content: $icon-train-departure;
+}
+
+.icon-train-arrival::before {
+  content: $icon-train-arrival;
+}
+
+.icon-suitcase::before {
+  content: $icon-suitcase;
+}
+
+.icon-snowflake::before {
+  content: $icon-snowflake;
+}
+
+.icon-manual-transmission::before {
+  content: $icon-manual-transmission;
+}
+
+.icon-car-seat::before {
+  content: $icon-car-seat;
+}
+
+.icon-car-door::before {
+  content: $icon-car-door;
+}
+
+.icon-automatic-transmission::before {
+  content: $icon-automatic-transmission;
+}
+
+.icon-rental-car::before {
+  content: $icon-car;
+}
+
+.icon-taxi::before {
+  content: $icon-taxi;
+}
+
+.icon-highspeed::before {
+  content: $icon-speed;
+}
+
+.icon-wheelchair::before {
+  content: $icon-wheelchair;
+}
+
+.icon-bistro::before {
+  content: $icon-bistro;
+}
+
+.icon-sj-logo::before {
+  content: $icon-sj-logo;
+}
+
+.icon-visibility-off::before {
+  content: $icon-visibility-off;
+}
+
+.icon-carry-on-bag::before {
+  content: $icon-carry-on-bag;
+}
+
+.icon-co2::before {
+  content: $icon-co2;
+}

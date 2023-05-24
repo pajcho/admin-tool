@@ -1,0 +1,57 @@
+<form @elementCrossFade [formGroup]="form" class="mt-5 flex flex-col items-start space-y-2">
+  <div class="flex w-full items-end justify-between xs:flex-wrap">
+    <div class="flex flex-wrap xs:w-full">
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>First Name</mat-label>
+        <input matInput name="firstname" formControlName="firstname" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Last Name</mat-label>
+        <input matInput name="lastname" formControlName="lastname" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option>Show All</mat-option>
+          <mat-option *ngFor="let role of userRoles" [value]="role">{{ role | dibDashesToSpaces }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <span class="ml-2 text-xs font-light uppercase" [class.text-white]="textColor === 'light'">Secondary Search</span>
+  <div class="flex w-full items-end justify-between xs:flex-wrap">
+    <div class="flex flex-wrap xs:w-full">
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Email</mat-label>
+        <input matInput name="username" formControlName="username" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Phone</mat-label>
+        <input matInput name="phone" formControlName="phone" autocomplete="off" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="small white-fill mr-6 xs:mr-0 xs:w-full">
+        <mat-label>Company</mat-label>
+        <input matInput name="companyName" formControlName="companyName" autocomplete="off" />
+      </mat-form-field>
+    </div>
+
+    <div class="mb-4 flex justify-end space-x-2 xs:w-full">
+      <button
+        *ngIf="form.dirty"
+        type="reset"
+        mat-button
+        class="py-1 px-4"
+        [class.text-white]="textColor === 'light'"
+        (click)="reset($event)"
+      >
+        Reset
+      </button>
+      <button type="submit" mat-flat-button color="primary" class="bg-dib-green-500 py-1 px-4 text-white" (click)="search()">Search</button>
+    </div>
+  </div>
+</form>

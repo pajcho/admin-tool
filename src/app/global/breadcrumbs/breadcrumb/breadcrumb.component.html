@@ -1,0 +1,15 @@
+<div class="px-1">
+  <span class="m-0 flex p-0 text-current xs:text-xs" *ngIf="loading; else showBreadcrumb">
+    <dib-dot-loader size="small" color="current"></dib-dot-loader>
+  </span>
+  <ng-template #showBreadcrumb>
+    <span class="m-0 flex p-0 text-current xs:text-xs" [attr.title]="title" *ngIf="!route; else breadcrumbWithLink">
+      {{ label }}
+    </span>
+    <ng-template #breadcrumbWithLink>
+      <a class="m-0 flex p-0 text-current no-underline hover:text-emerald-600 xs:text-xs" [attr.title]="title" [routerLink]="route">
+        {{ label }}
+      </a>
+    </ng-template>
+  </ng-template>
+</div>

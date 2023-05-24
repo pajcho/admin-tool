@@ -1,0 +1,162 @@
+<mat-sidenav-container (backdropClick)="close()">
+  <mat-sidenav
+    *ngIf="isLoggedIn$ | async"
+    [fixedInViewport]="true"
+    [autoFocus]="false"
+    [opened]="sidenavIsVisible$ | async"
+    mode="over"
+    position="end"
+  >
+    <mat-nav-list class="pt-0">
+      <div class="sidenav-logo-wrapper mb-4 flex flex-col justify-center">
+        <div class="mx-6 flex items-center justify-between">
+          <i class="material-icons self-start text-dib-green-600 text-4xl">policy</i>
+          <button class="text-decoration-none -mr-4 inline-flex py-1 px-3 text-emerald-600" (click)="close()">
+            <span class="material-icons">clear</span>
+          </button>
+        </div>
+      </div>
+
+      <a
+        mat-list-item
+        [routerLink]="'/dashboard'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Dashboard
+      </a>
+
+      <span class="mx-2 mt-6 mb-2 block border-b px-4 pb-2 text-xs uppercase text-dib-green-600 xs:mt-4 xs:text-2xs">TMC Operations</span>
+
+      <a
+        mat-list-item
+        [routerLink]="'/billing-requests'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Billing Requests
+      </a>
+      <a
+        mat-list-item
+        [routerLink]="'/companies'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Companies
+      </a>
+      <a
+        mat-list-item
+        [routerLink]="'/companies/users'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Company Users
+      </a>
+      <a
+        mat-list-item
+        [routerLink]="'/companies/bookings'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Bookings
+      </a>
+      <a
+        mat-list-item
+        [routerLink]="'/system-messages'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        System Messages
+      </a>
+
+      <span
+        class="mx-2 mt-6 mb-2 block border-b px-4 pb-2 text-xs uppercase text-dib-green-600 xs:mt-4 xs:text-2xs"
+        *ngIf="(loggedInUser$ | async).hasAdminAccess()"
+      >
+        TMC Configurations
+      </span>
+
+      <a
+        mat-list-item
+        *ngIf="(loggedInUser$ | async).hasAdminAccess()"
+        [routerLink]="'/users'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Users
+      </a>
+
+      <span
+        class="mx-2 mt-6 mb-2 block border-b px-4 pb-2 text-xs uppercase text-dib-green-600 xs:mt-4 xs:text-2xs"
+        *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+      >
+        Travel Portal Settings
+      </span>
+
+      <a
+        mat-list-item
+        *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+        [routerLink]="'/products'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Products
+      </a>
+      <a
+        mat-list-item
+        *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+        [routerLink]="'/products/vat-categories'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Product Vat Categories
+      </a>
+      <a
+        mat-list-item
+        *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+        [routerLink]="'/products/vendors'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Product Vendors
+      </a>
+      <a
+        mat-list-item
+        *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+        [routerLink]="'/products/vendors/payment-providers'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Vendors Payment Providers
+      </a>
+      <a
+        mat-list-item
+        *ngIf="(loggedInUser$ | async).isSuperAdmin()"
+        [routerLink]="'/features'"
+        routerLinkActive="active bg-emerald-600 text-white"
+        (click)="close()"
+        class="px-2 xs:h-8 xs:text-sm"
+      >
+        Features
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

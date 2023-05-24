@@ -1,0 +1,33 @@
+@import 'src/variables';
+
+:host {
+  @apply flex flex-1;
+
+  mat-sidenav-container {
+    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+       causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+    @apply flex-1 position-unset;
+
+    mat-sidenav {
+      min-width: 232px;
+
+      mat-nav-list {
+        .sidenav-logo-wrapper {
+          height: var(--dib-header-height);
+        }
+
+        a {
+          text-decoration: none;
+          font-weight: 300;
+          color: inherit;
+        }
+      }
+    }
+
+    mat-sidenav-content {
+      @apply bg-dib-gray-100;
+
+      min-height: calc(100vh - var(--dib-header-height));
+    }
+  }
+}

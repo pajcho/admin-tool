@@ -1,0 +1,149 @@
+<form *ngIf="form" [formGroup]="form">
+  <!-- Details -->
+  <div class="flex w-full justify-between">
+    <div>
+      <h2 class="text-xl">
+        {{ companyUser.fullName }}
+      </h2>
+      <span class="text-xs text-gray-500">{{ companyUser.role }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="companyUser.active" class="mt-6 mb-10 max-w-max">
+    <button class="border-current text-current" type="submit" mat-stroked-button (click)="travelPortal()">
+      <dib-dot-loader size="small" color="current" *ngIf="overrideTokenLoading$ | async"></dib-dot-loader>
+
+      <ng-container *ngIf="!(overrideTokenLoading$ | async)">
+        <span>Travel Portal</span>
+        <i class="material-icons ml-2 text-lg">launch</i>
+      </ng-container>
+    </button>
+
+    <a
+      class="ml-4"
+      mat-button
+      color="primary"
+      *ngIf="showAssistedBooking && (loggedInUser$ | async).isSuperAdmin()"
+      [routerLink]="'/companies/users/' + companyUser.id + '/assisted-booking'"
+    >
+      <span>New Assisted Booking</span>
+    </a>
+  </div>
+
+  <!-- Agent notes -->
+  <div class="mt-6 space-x-20 border-b pb-3">
+    <div class="w-1/2 sm:w-full">
+      <mat-form-field class="w-full">
+        <mat-label>Agent note</mat-label>
+        <textarea
+          matInput
+          formControlName="note"
+          type="text"
+          name="note"
+          cols="60"
+          rows="10"
+          [class.disabled]="loading$ | async"
+        ></textarea>
+      </mat-form-field>
+
+      <div class="flex cursor-pointer space-x-2" *ngIf="form.dirty">
+        <span class="flex flex-1 items-center text-xs text-gray-500">Changes not yet saved.</span>
+        <button type="reset" class="small-button" mat-button [class.disabled]="loading$ | async" (click)="initForm()">Cancel</button>
+        <button type="submit" class="small-button" mat-stroked-button color="primary" (click)="save()">
+          <dib-dot-loader size="small" color="current" *ngIf="loading$ | async"></dib-dot-loader>
+          <span *ngIf="!(loading$ | async)">Save</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex space-x-20 border-b pb-6">
+    <div class="grid grid-cols-1 gap-1">
+      <small class="text-xs text-gray-500">Date of birth</small>
+      <div>
+        <span>{{ (companyUser.dateOfBirth | dibDate: 'productDetailsShort') || '-' }}</span>
+        <span *ngIf="companyUser.dateOfBirth" class="text-xs text-gray-500"> ({{ companyUser.dateOfBirth | dibDate: 'yearsOld' }}) </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid">
+    <span class="mb-3 text-xs uppercase text-gray-500">Contact</span>
+    <div class="mb-6 grid grid-cols-4 gap-3 md:grid-cols-2 xs:grid-cols-1">
+      <div class="grid grid-cols-1 gap-1">
+        <small class="text-xs text-gray-500">Email</small>
+        <div class="break-words">
+          <span>{{ companyUser.username || '-' }}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-1">
+        <small class="text-xs text-gray-500">Phone</small>
+        <div class="break-words">
+          <span>{{ companyUser.phone || '-' }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-4 gap-3 border-b pb-6 md:grid-cols-2 xs:grid-cols-1">
+      <div class="grid grid-cols-1 gap-1">
+        <small class="text-xs text-gray-500">Address</small>
+        <div class="break-words">
+          <span>{{ companyUser.address || '-' }}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-1">
+        <small class="text-xs text-gray-500">Town / city</small>
+        <div class="break-words">
+          <span>{{ companyUser.city || '-' }}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-1">
+        <small class="text-xs text-gray-500">Post / zip code</small>
+        <div class="break-words">
+          <span>{{ companyUser.zipcode || '-' }}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-1">
+        <small class="text-xs text-gray-500">Country</small>
+        <div class="break-words">
+          <span>{{ companyUser.country || '-' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="my-6 grid grid-cols-2 gap-3 border-b pb-6 md:grid-cols-1">
+    <div class="grid">
+      <span class="mb-3 text-xs uppercase text-gray-500">Localize</span>
+      <div class="grid grid-cols-2 gap-3 xs:grid-cols-1">
+        <div class="grid grid-cols-1 gap-1">
+          <small class="text-xs text-gray-500">Language</small>
+          <div class="break-words">
+            <span>{{ companyUser.language || '-' }}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-1">
+          <small class="text-xs text-gray-500">Currency</small>
+          <div class="break-words">
+            <span>{{ companyUser.currency || '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <span class="mb-3 text-xs uppercase text-gray-500">Travel documents</span>
+      <div class="grid grid-cols-2 gap-3 xs:grid-cols-1">
+        <div class="grid grid-cols-1 gap-1">
+          <small class="text-xs text-gray-500">ID card</small>
+          <div class="break-words">
+            <span>{{ companyUser.idCard?.idNumber || '-' }}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-1">
+          <small class="text-xs text-gray-500">Passport</small>
+          <div class="break-words">
+            <span>{{ companyUser.passport?.idNumber || '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

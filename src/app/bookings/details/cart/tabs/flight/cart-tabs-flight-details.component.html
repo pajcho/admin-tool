@@ -1,0 +1,55 @@
+<div *ngFor="let flight of data.flights; last as last" class="flex space-x-4 sm:flex-col sm:space-x-0 sm:space-y-4" [class.mb-4]="!last">
+  <div class="flex max-w-xs flex-1 flex-col space-y-2 sm:max-w-full">
+    <span class="text-xs text-gray-500">Flight Details</span>
+    <div class="flex space-x-2">
+      <i class="material-icons text-xl text-dib-green-600">flight</i>
+      <div class="flex flex-1 flex-col sm:flex-row">
+        <div class="flex flex-1 flex-col">
+          <span class="mb-2 text-xl font-bold">
+            {{ flight.firstSegment.departure.airportName }} ({{ flight.firstSegment.departure.airportCode }}) -
+            {{ flight.lastSegment.arrival.airportName }} ({{ flight.lastSegment.arrival.airportCode }})
+          </span>
+          <span>{{ flight.marketingAirlineLabel }} &#9702; {{ flight.cabinClassLabel | dibDashesToSpaces | titlecase }}</span>
+          <span>{{ flight.firstSegment.departure.time | dibDate: 'productDetails' }}</span>
+          <span>
+            {{ flight.firstSegment.departure.time | dibDate: 'time' }} -
+            {{ flight.lastSegment.arrival.time | dibDate: 'time' }}
+            <ng-container *ngIf="flight.duration">({{ flight.duration | dibDuration: 'secondsToHrMin' }})</ng-container>
+          </span>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="mt-4 flex flex-col sm:mt-0">
+            <span class="text-xs text-gray-500">Booking reference</span>
+            <span>{{ data.bookingReference?.reference || '-' }}</span>
+          </div>
+
+          <a (click)="showDetails(flight)" class="mt-6 cursor-pointer font-bold text-dib-green-600 sm:mt-2">View details</a>
+          <span *ngIf="data.packageId" class="text-xs text-gray-500">This is part of a flight + hotel package.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-1 flex-col space-y-2">
+    <span class="text-xs text-gray-500">Passenger Details</span>
+    <div class="flex flex-1 flex-wrap items-baseline">
+      <div
+        *ngFor="let traveler of data.travelers; last as last; index as index"
+        class="mb-3 flex flex-col rounded border p-5"
+        [class.mr-3]="!last"
+      >
+        <span class="mb-2 whitespace-nowrap text-xl font-bold">{{ traveler.fullName }}</span>
+        <span class="whitespace-nowrap">{{ traveler.email }}</span>
+
+        <!-- TODO: We do not have seating selection data yet -->
+        <!-- <span class="whitespace-nowrap">Seat 5F</span> -->
+
+        <!-- TODO: We do not have loyalty program data yet -->
+        <!-- <div class="flex flex-col mt-4">
+          <span class="text-xs text-gray-500">Loyalty Program</span>
+          <div class="flex flex-wrap">Miles & Smiles</div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>

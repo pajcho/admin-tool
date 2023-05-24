@@ -1,0 +1,234 @@
+/* stylelint-disable function-no-unknown */
+
+@use '@angular/material' as mat;
+
+/* stylelint-disable-next-line no-invalid-position-at-import-rule */
+@import 'src/variables';
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+
+/* stylelint-disable-next-line scss/at-mixin-argumentless-call-parentheses */
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$dib-app-primary: mat.define-palette(
+  map_merge(
+    mat.$green-palette,
+    (
+      // same as tailwind dib-green-600
+      500: #39845c
+    )
+  )
+);
+$dib-app-accent: mat.define-palette(mat.$blue-grey-palette);
+
+// The warn palette is optional (defaults to red).
+$dib-app-warn: mat.define-palette(mat.$amber-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as `color` or `typography`.
+$dib-app-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $dib-app-primary,
+      accent: $dib-app-accent,
+    ),
+  )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component that you are using.
+@include mat.all-component-themes($dib-app-theme);
+
+dib-wrapper-listing {
+  // Always make sure to have small input fields in the filters panel
+  .filters-wrapper {
+    mat-form-field {
+      &.mat-form-field {
+        @apply text-xs;
+
+        .mat-form-field-wrapper {
+          @apply mt-0 p-0;
+        }
+      }
+    }
+  }
+
+  // Make sure that action buttons are big enough
+  .actions-wrapper {
+    .mat-button,
+    .mat-stroked-button {
+      @apply py-2.5 px-5 text-xs font-normal;
+
+      line-height: 22px;
+    }
+  }
+}
+
+mat-optgroup {
+  .mat-optgroup-label {
+    @apply border-b border-dib-green-600 text-dib-green-600;
+  }
+}
+
+mat-form-field {
+  &.mat-form-field {
+    // Make input fields smaller by decreasing font size
+    &.small {
+      @apply text-xs;
+    }
+
+    // Apply a white background and remove underline ripple line
+    // It only works for <mat-form-field appearance="fill"> for now
+    &.white-fill {
+      &.mat-form-field-appearance-fill {
+        .mat-form-field-flex {
+          @apply rounded bg-white;
+        }
+
+        .mat-form-field-underline {
+          @apply hidden;
+        }
+      }
+    }
+  }
+}
+
+.mat-sort-header {
+  .mat-sort-header-arrow {
+    @apply ml-2;
+  }
+
+  &.text-right {
+    .mat-sort-header-container {
+      flex-direction: row-reverse;
+    }
+
+    .mat-sort-header-arrow {
+      @apply mr-2 ml-0;
+    }
+  }
+}
+
+.mat-progress-bar {
+  @apply h-0.5;
+}
+
+.mat-button,
+.mat-stroked-button {
+  @apply font-normal;
+
+  &.small-button {
+    @apply py-0 px-2.5 text-xs;
+
+    line-height: 26px;
+  }
+}
+
+.mat-table {
+  border-collapse: inherit;
+
+  // All action buttons are hidden by default and will be visible on mouse over
+  .mat-column-actions > * {
+    visibility: hidden;
+  }
+
+  // Custom style for multiple headers since we have a loader in the second row
+  // First one is a header row
+  tr.mat-header-row:first-child:not(:last-child) {
+    @apply h-8 align-bottom;
+
+    > th.mat-header-cell {
+      @apply border-b-0 font-normal uppercase;
+    }
+  }
+
+  // And this one is a loader row
+  tr.mat-header-row:last-child:not(:first-child) {
+    @apply h-1;
+
+    > th.mat-header-cell {
+      &:first-child {
+        @apply relative py-1 pl-0;
+      }
+    }
+  }
+
+  // Table headers responsive style
+  tr.mat-header-row {
+    th.mat-header-cell {
+      @apply xs:text-2xs;
+    }
+  }
+
+  tr.mat-row {
+    td.mat-cell {
+      // Text inside tables responsive style
+      @apply xs:text-xs;
+
+      // Table Action buttons responsive style
+      .mat-button-base {
+        @screen xs {
+          width: 20px;
+        }
+
+        .material-icons {
+          @apply xs:text-sm;
+        }
+      }
+    }
+
+    // Table row hover effect with light background and visible action buttons
+    &:hover {
+      @apply bg-gray-50;
+
+      .mat-column-actions > * {
+        @apply visible;
+      }
+    }
+  }
+}
+
+// Pagination responsive style
+.mat-paginator {
+  .mat-paginator-range-actions {
+    button[class*='mat-paginator-navigation-'] {
+      @screen xs {
+        width: 30px;
+        height: 30px;
+      }
+
+      .mat-paginator-icon {
+        @apply xs:h-2/3;
+      }
+    }
+  }
+}
+
+.mat-snack-bar-container {
+  max-width: 100% !important;
+
+  .mat-simple-snackbar-action {
+    @apply ml-6;
+  }
+}
+
+// Form fields border thickness
+.mat-form-field-appearance-outline .mat-form-field-outline-thick .mat-form-field-outline-start,
+.mat-form-field-appearance-outline .mat-form-field-outline-thick .mat-form-field-outline-end,
+.mat-form-field-appearance-outline .mat-form-field-outline-thick .mat-form-field-outline-gap {
+  border-width: 1px !important;
+}
+
+// Responsive popup width on smaller screens
+.cdk-global-overlay-wrapper {
+  .cdk-overlay-pane {
+    @screen xs {
+      min-width: calc(100vw - 100px) !important;
+    }
+  }
+}

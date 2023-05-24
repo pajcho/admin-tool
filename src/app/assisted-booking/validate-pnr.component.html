@@ -1,0 +1,72 @@
+<div class="flex w-full justify-between">
+  <div>
+    <h2 class="text-xl">Validate PNR</h2>
+    <span class="text-xs text-gray-500"> First step is to validate PNR number by filling in all the required fields </span>
+  </div>
+</div>
+
+<form [formGroup]="form" *ngIf="company && booker" class="mt-8 flex flex-col gap-2" [class.loading]="isValidatingPNR$ | async">
+  <div class="flex flex-row gap-2 sm:flex-col">
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>Company</mat-label>
+      <input readonly matInput name="company" formControlName="company" autocomplete="off" required />
+    </mat-form-field>
+
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>Booker</mat-label>
+      <input readonly matInput name="booker" formControlName="booker" autocomplete="off" required />
+    </mat-form-field>
+
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>
+        <ng-container *ngIf="isLoadingProducts$ | async; else showProductLabel">
+          <dib-dot-loader size="small" color="current"></dib-dot-loader>
+        </ng-container>
+        <ng-template #showProductLabel>Product Type</ng-template>
+      </mat-label>
+      <mat-select formControlName="product" required>
+        <mat-option *ngFor="let product of products$ | async" [value]="product">{{ product.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="flex flex-row gap-2 sm:flex-col">
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>
+        <ng-container *ngIf="isLoadingVendors$ | async; else showVendorLabel">
+          <dib-dot-loader size="small" color="current"></dib-dot-loader>
+        </ng-container>
+        <ng-template #showVendorLabel>Vendor</ng-template>
+      </mat-label>
+      <mat-select formControlName="vendor" required>
+        <mat-option *ngFor="let vendor of vendors$ | async" [value]="vendor">{{ vendor.vendorName }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="small white-fill w-[250px]">
+      <mat-label>Enter PNR</mat-label>
+      <input matInput name="pnr" formControlName="pnr" autocomplete="off" required />
+    </mat-form-field>
+  </div>
+
+  <div class="flex flex-row flex-wrap gap-5">
+    <button [disabled]="isValidatingPNR$ | async" class="mt-4 w-min" type="submit" mat-stroked-button color="primary" (click)="validate()">
+      <dib-dot-loader size="small" color="current" *ngIf="isValidatingPNR$ | async"></dib-dot-loader>
+
+      <ng-container *ngIf="!(isValidatingPNR$ | async)">
+        <span>Validate</span>
+        <i class="material-icons ml-2 text-lg">auto_fix_normal</i>
+      </ng-container>
+    </button>
+
+    <!-- Only available when data is mocked and serve as a helper while testing -->
+    <ng-container *ngIf="mockPnr">
+      <div class="mt-4 pt-2">
+        <mat-radio-group class="flex flex-row gap-5">
+          <mat-radio-button value="preview" color="primary" (change)="onMockedActionsClick('preview')">Preview PNR?</mat-radio-button>
+          <mat-radio-button value="update" color="primary" (change)="onMockedActionsClick('update')">Update PNR?</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </ng-container>
+  </div>
+</form>

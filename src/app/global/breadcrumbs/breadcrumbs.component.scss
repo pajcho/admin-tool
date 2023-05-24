@@ -1,0 +1,6 @@
+:host {
+  > div {
+    min-height: var(--dib-breadcrumbs-height);
+    max-height: var(--dib-breadcrumbs-height);
+  }
+}

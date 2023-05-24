@@ -1,0 +1,31 @@
+<div class="mt-4 flex flex-col text-sm xs:text-xs">
+  <div class="z-0 -mb-0.5 flex whitespace-nowrap px-3">
+    <span
+      [ngClass]="[activeTab === 'companies' ? 'border-b-2 border-dib-green-600' : 'opacity-50']"
+      class="cursor-pointer p-2 pt-0 uppercase"
+      (click)="activeTab = 'companies'"
+    >
+      Companies
+    </span>
+    <span
+      [ngClass]="[activeTab === 'users' ? 'cursor-pointer border-b-2 border-dib-green-600' : 'opacity-50']"
+      class="cursor-pointer p-2 pt-0 uppercase"
+      (click)="activeTab = 'users'"
+    >
+      Company Users
+    </span>
+    <span
+      [ngClass]="[activeTab === 'bookings' ? 'cursor-pointer border-b-2 border-dib-green-600' : 'opacity-50']"
+      class="cursor-pointer p-2 pt-0 uppercase"
+      (click)="activeTab = 'bookings'"
+    >
+      Bookings
+    </span>
+  </div>
+
+  <div class="rounded-lg bg-dib-gray-100 px-4">
+    <dib-search-companies *ngIf="activeTab === 'companies'" (onSearch)="filterCompanies($event)"></dib-search-companies>
+    <dib-search-users *ngIf="activeTab === 'users'" (onSearch)="filterUsers($event)"></dib-search-users>
+    <dib-search-bookings *ngIf="activeTab === 'bookings'" (onSearch)="filterBookings($event)"></dib-search-bookings>
+  </div>
+</div>

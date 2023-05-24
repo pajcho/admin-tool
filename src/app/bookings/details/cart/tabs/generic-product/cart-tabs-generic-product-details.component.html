@@ -1,0 +1,40 @@
+<!-- TODO: Do we want to display category and products info here -->
+<!-- TODO: Do we want to display productType label here -->
+
+<div class="flex space-x-4 sm:flex-col sm:space-x-0 sm:space-y-4">
+  <div class="flex max-w-xs flex-1 flex-col space-y-2 sm:max-w-full">
+    <span class="text-xs text-gray-500">Generic Product Details</span>
+    <div class="flex space-x-2">
+      <i class="material-icons text-xl text-dib-green-600">{{ productIcon(data.productName) }}</i>
+      <div class="flex flex-1 flex-col sm:flex-row">
+        <div class="flex flex-1 flex-col">
+          <span class="mb-2 text-xl font-bold">{{ data.name }}</span>
+          <span>{{ data.description }}</span>
+          <span>{{ data.requestedCheckIn | dibDate: 'productDetails' }} - {{ data.requestedCheckOut | dibDate: 'productDetails' }}</span>
+          <div>
+            <dib-plural [from]="data.totalStay" single="day" multiple="days"></dib-plural>
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="mt-4 flex flex-col sm:mt-0">
+            <span class="text-xs text-gray-500">Booking reference</span>
+            <span>{{ data.bookingReference || '-' }}</span>
+          </div>
+
+          <!-- TODO: View details popup will be implemented in the next iteration -->
+          <!-- <a class="mt-6 font-bold cursor-pointer sm:mt-2 text-dib-green-600">View details</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-1 flex-col space-y-2">
+    <span class="text-xs text-gray-500">Guest Details</span>
+    <div class="flex flex-1 flex-wrap items-baseline">
+      <div class="mr-3 mb-3 flex flex-col rounded border p-5">
+        <span class="mb-2 whitespace-nowrap text-xl font-bold">{{ data.customer.firstName }} {{ data.customer.lastName }}</span>
+        <span class="whitespace-nowrap">{{ data.customer.email }}</span>
+      </div>
+    </div>
+  </div>
+</div>

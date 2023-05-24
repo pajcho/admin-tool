@@ -1,0 +1,12 @@
+<h2 mat-dialog-title class="flex items-center justify-between">
+  <ng-content></ng-content>
+  <i
+    *ngIf="closable"
+    class="material-icons cursor-pointer text-gray-500 hover:text-dib-green-600"
+    matTooltip="Close dialog"
+    matTooltipPosition="left"
+    [mat-dialog-close]="false"
+  >
+    close
+  </i>
+</h2>

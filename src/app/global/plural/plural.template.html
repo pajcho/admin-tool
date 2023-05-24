@@ -1,0 +1,4 @@
+<span [ngPlural]="from">
+  <ng-template ngPluralCase="=1">1 {{ single }}</ng-template>
+  <ng-template ngPluralCase="other">{{ from + ' ' + multiple }}</ng-template>
+</span>

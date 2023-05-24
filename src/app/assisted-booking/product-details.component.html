@@ -1,0 +1,68 @@
+<div class="flex w-full justify-between">
+  <div>
+    <h2 class="text-xl">{{ pageTitle }} flight booking</h2>
+    <span class="text-xs text-gray-500">
+      <ng-container *ngIf="pnr.isPreview; else defaultDescription">
+        PNR found but has no changes on it so this is where you can preview and go to existing cart to see full details
+      </ng-container>
+      <ng-template #defaultDescription>
+        Second step is to fill in all the fields required for a product including passenger details, payment provider, markup, fees, etc.
+      </ng-template>
+    </span>
+  </div>
+</div>
+
+<div *ngIf="hasFlightDestination; else askForFlightDestination" class="mt-8 flex flex-col gap-2" [class.loading]="isConfirmingPNR$ | async">
+  <app-flight-details [pnr]="pnr"></app-flight-details>
+
+  <!-- PNR Details Form -->
+  <app-product-details-form
+    *ngIf="!pnr.isPreview; else previewDetails"
+    [pnr]="pnr"
+    [company]="company"
+    [booker]="booker"
+  ></app-product-details-form>
+
+  <!-- Preview PNR Details -->
+  <ng-template #previewDetails>
+    <small class="mt-5 mb-3 w-full border-b pb-2 text-xs font-bold text-gray-500">Passenger Details</small>
+    <div class="flex flex-col">
+      <div *ngFor="let traveler of pnr.travellers" class="mb-3 flex flex-col">
+        <div class="flex flex-col flex-wrap">
+          <span class="mr-3 font-bold">{{ traveler.firstName }} {{ traveler.lastName }}</span>
+          <div *ngIf="traveler.email" class="mr-3 flex text-xs">
+            <i class="material-icons mr-1 text-xs text-dib-green-600">email</i>
+            <span>{{ traveler.email }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a
+      [routerLink]="['/companies/bookings', pnr.cartId]"
+      class="group mt-6 flex cursor-pointer items-center gap-2 font-bold text-dib-green-600 sm:mt-2"
+    >
+      View booking details
+      <i class="material-icons group-hover:-translate-x-1">arrow_right_alt</i>
+    </a>
+  </ng-template>
+</div>
+
+<ng-template #askForFlightDestination>
+  <app-flight-destination
+    [pnr]="pnr"
+    [destination]="flightDestination$ | async"
+    (onSelect)="selectFlightDestination($event)"
+  ></app-flight-destination>
+
+  <button
+    [disabled]="!(flightDestination$ | async)"
+    class="mt-10 w-min"
+    type="submit"
+    mat-stroked-button
+    color="primary"
+    (click)="confirmFlightDestination()"
+  >
+    <span>Confirm outbound destination</span>
+  </button>
+</ng-template>

@@ -1,0 +1,47 @@
+:host {
+  @apply relative block;
+
+  // Tab group header
+  &[type~='header'] {
+    > div {
+      @apply text-xs uppercase text-gray-500;
+
+      > * {
+        @apply py-2 px-5;
+      }
+    }
+  }
+
+  // Single tab item
+  &:not([type]) {
+    @apply mb-3;
+
+    > div {
+      @apply z-0 cursor-pointer whitespace-nowrap text-gray-500;
+      @apply rounded-l-md border-l-4 border-transparent bg-white bg-opacity-40;
+      @apply hover:bg-opacity-70 hover:text-current hover:shadow-sm;
+
+      > * {
+        @apply overflow-hidden text-ellipsis p-4;
+      }
+    }
+
+    &[active='true'] {
+      > div {
+        @apply border-l-4 border-emerald-600 bg-opacity-100 text-current shadow-sm;
+      }
+
+      // Hack to hide the shadow on the right side of the tab
+      &::after {
+        content: '';
+
+        @apply absolute top-0 -right-2.5 h-full w-2.5 bg-white;
+      }
+    }
+  }
+
+  .badge {
+    @apply float-right ml-1 inline-flex h-5 w-5 items-center justify-center self-end rounded-full;
+    @apply bg-emerald-600 pr-[1px] text-xs font-medium text-white;
+  }
+}

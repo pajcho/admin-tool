@@ -1,0 +1,11 @@
+{
+  "$schema": "https://on.cypress.io/cypress.schema.json",
+  "baseUrl": "https://localhost:4201",
+  "blockHosts": ["*google-analytics.com", "*googletagmanager.com"],
+  "pluginsFile": false,
+  "supportFile": "cypress/support/index.ts",
+  "testFiles": "**/*.spec.ts",
+  "viewportWidth": 1280,
+  "viewportHeight": 720,
+  "video": false
+}

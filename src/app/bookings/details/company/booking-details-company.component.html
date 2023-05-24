@@ -1,0 +1,46 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+    <dib-breadcrumb label="Companies" route="/companies"></dib-breadcrumb>
+    <dib-breadcrumb label="Bookings" route="/companies/bookings"></dib-breadcrumb>
+    <dib-breadcrumb
+      [label]="(booking$ | async)?.tripId"
+      [route]="'/companies/bookings/' + (booking$ | async)?.cartId"
+      [loading]="firstTimeLoading$ | async"
+    ></dib-breadcrumb>
+    <dib-breadcrumb [label]="(company$ | async)?.corporationName" [loading]="firstTimeLoading$ | async"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <dib-wrapper-details [loading]="firstTimeLoading$ | async" [item]="company$ | async">
+    <!-- Sidebar tabs -->
+    <ng-container slot="tabs">
+      <!-- TODO: We can probably extract and reuse this tab list across entire booking module (booking, traveler, company) -->
+      <dib-wrapper-details-tab type="header">Company</dib-wrapper-details-tab>
+      <dib-wrapper-details-tab active="true" [title]="(company$ | async)?.corporationName">{{
+        (company$ | async)?.corporationName
+      }}</dib-wrapper-details-tab>
+
+      <ng-container *ngIf="(booking$ | async)?.travelerProfiles().length">
+        <dib-wrapper-details-tab type="header">Traveler Profiles</dib-wrapper-details-tab>
+        <dib-wrapper-details-tab
+          *ngFor="let traveler of (booking$ | async)?.travelerProfiles()"
+          [title]="traveler.name"
+          [route]="'/companies/bookings/' + (booking$ | async)?.cartId + '/users/' + traveler.id"
+        >
+          {{ traveler.name }}
+        </dib-wrapper-details-tab>
+      </ng-container>
+
+      <dib-wrapper-details-tab type="header">Booking</dib-wrapper-details-tab>
+      <dib-wrapper-details-tab [title]="(booking$ | async)?.tripId" [route]="'/companies/bookings/' + (booking$ | async)?.cartId">
+        {{ (booking$ | async)?.tripId }}
+      </dib-wrapper-details-tab>
+    </ng-container>
+
+    <!-- Main content -->
+    <ng-container slot="content" *ngIf="company$ | async as company">
+      <app-company-details-form [company]="company"></app-company-details-form>
+      <app-company-details-tabs [company]="company"></app-company-details-tabs>
+    </ng-container>
+  </dib-wrapper-details>
+</dib-wrapper-main>

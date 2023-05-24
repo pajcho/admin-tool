@@ -1,0 +1,53 @@
+<dib-wrapper-main>
+  <dib-breadcrumbs>
+    <dib-breadcrumb label="Dashboard" route="/"></dib-breadcrumb>
+  </dib-breadcrumbs>
+
+  <div class="base-dashboard-grid m-6 grid grid-flow-col gap-6 sm:grid-flow-row sm:grid-cols-none">
+    <div class="grid gap-6 sm:grid-flow-col xs:grid-flow-row">
+      <dib-wrapper-widget class="min-w-max">
+        <ng-container slot="title">Open work items</ng-container>
+        <ng-container slot="content">
+          <div class="grid grid-cols-2 gap-6">
+            <ng-container *ngFor="let stat of openItemsStats">
+              <dib-wrapper-stat
+                [loading]="(stat.observable$ | async).loading"
+                [count]="(stat.observable$ | async).count"
+                [link]="stat.link"
+                [title]="stat.title"
+              ></dib-wrapper-stat>
+            </ng-container>
+          </div>
+        </ng-container>
+      </dib-wrapper-widget>
+      <dib-wrapper-widget class="min-w-max">
+        <ng-container slot="title">Overview</ng-container>
+        <ng-container slot="content">
+          <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 xs:grid-cols-2">
+            <ng-container *ngFor="let stat of overviewStats">
+              <dib-wrapper-stat
+                [loading]="(stat.observable$ | async).loading"
+                [count]="(stat.observable$ | async).count"
+                [link]="stat.link"
+                [title]="stat.title"
+              ></dib-wrapper-stat>
+            </ng-container>
+          </div>
+        </ng-container>
+      </dib-wrapper-widget>
+    </div>
+    <div class="row-end-1">
+      <dib-wrapper-widget>
+        <ng-container slot="title">Quick search</ng-container>
+        <ng-container slot="content">
+          <dib-quick-search-wrapper
+            activeTab="users"
+            (searchCompanies)="onSearchCompanies($event)"
+            (searchUsers)="onSearchUsers($event)"
+            (searchBookings)="onSearchBookings($event)"
+          ></dib-quick-search-wrapper>
+        </ng-container>
+      </dib-wrapper-widget>
+    </div>
+  </div>
+</dib-wrapper-main>

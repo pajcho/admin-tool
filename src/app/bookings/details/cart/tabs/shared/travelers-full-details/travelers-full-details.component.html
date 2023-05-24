@@ -1,0 +1,23 @@
+<small class="text-xs text-gray-500">{{ title }}</small>
+<div *ngFor="let traveler of travelers" class="mb-1 flex flex-col">
+  <div class="flex flex-row items-baseline xs:flex-col xs:items-stretch">
+    <span class="mr-3 font-bold">{{ traveler.firstName }} {{ traveler.lastName }}</span>
+    <div class="flex flex-col">
+      <div class="flex flex-row flex-wrap gap-2 text-xs">
+        <div *ngIf="traveler.email" class="flex gap-1">
+          <i class="material-icons text-xs text-dib-green-600">email</i>
+          <span>{{ traveler.email }}</span>
+        </div>
+        <div *ngIf="traveler.phoneNumber" class="flex gap-1">
+          <i class="material-icons text-xs text-dib-green-600">phone</i>
+          <span>{{ traveler.phoneNumber }}</span>
+        </div>
+        <div *ngIf="traveler.travelerReferenceFields.costCenterName" class="flex gap-1">
+          <i class="material-icons text-xs text-dib-green-600">info_outline</i>
+          <span>Cost Center: {{ traveler.travelerReferenceFields.costCenterName }}</span>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="contentTpl; context: { $implicit: traveler }"></ng-container>
+    </div>
+  </div>
+</div>
