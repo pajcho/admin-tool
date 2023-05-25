@@ -4,8 +4,15 @@
 
 Welcome to the Admin Tool repository :wave:
 
-## Demo link
+## Demo link and login details
 :point_right: You can view a Github Pages demo [HERE](https://pajcho.github.io/admin-tool/) :point_left:
+
+Since all the data is mocked, you can enter **any email** + **any password** in order to log into the application
+
+Example login details: 
+
+- :email: **Email**: user@example.com
+- :see_no_evil: **Password**: 123456
 
 ## Important notes:
 - This is a **demo** Angular application. 
