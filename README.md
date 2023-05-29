@@ -2,7 +2,17 @@
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 
-Welcome to the Admin Tool repository :wave: 
+Welcome to the Admin Tool repository :wave:
+
+## Demo link and login details
+:point_right: You can view a Github Pages demo [HERE](https://pajcho.github.io/admin-tool/) :point_left:
+
+Since all the data is mocked, you can enter **any email** + **any password** in order to log into the application
+
+Example login details: 
+
+- :email: **Email**: user@example.com
+- :see_no_evil: **Password**: 123456
 
 ## Important notes:
 - This is a **demo** Angular application. 
