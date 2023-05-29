@@ -27,7 +27,8 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:clean": "rimraf ./cypress/screenshots/ ./cypress/snapshots/ ./cypress/videos/",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "build:github-pages": "ng build --output-path docs --base-href /admin-tool/"
   },
   "dependencies": {
     "@angular/animations": "14.2.8",
